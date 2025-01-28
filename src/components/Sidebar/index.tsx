@@ -41,8 +41,30 @@ const menuGroups = [
         ),
         label: "Dashboard",
         route: "#",
+        children: [{ label: "eCommerce", route: "/" }],
+      },
+
+      {
+        icon: (
+          <svg
+            className="fill-current"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 8H21V10H3V8ZM3 13H21V15H3V13ZM3 18H21V20H3V18Z"
+              fill=""
+            />
+          </svg>
+        ),
+        label: "Courriers",
+        route: "#",
         children: [
-          { label: "eCommerce", route: "/" },
+          { label: "Liste des courriers", route: "/courriers" },
+          { label: "Ajouter un courrier", route: "/courriers/ajouter" },
         ],
       },
       {
@@ -162,9 +184,7 @@ const menuGroups = [
         ),
         label: "Tables",
         route: "#",
-        children: [
-          { label: "Tables", route: "/tables" },
-        ],
+        children: [{ label: "Tables", route: "/tables" }],
       },
       {
         icon: (
@@ -186,9 +206,7 @@ const menuGroups = [
         ),
         label: "Pages",
         route: "#",
-        children: [
-          { label: "Settings", route: "/pages/settings" },
-        ],
+        children: [{ label: "Settings", route: "/pages/settings" }],
       },
     ],
   },
@@ -219,9 +237,7 @@ const menuGroups = [
         ),
         label: "Charts",
         route: "#",
-        children: [
-          { label: "Basic Chart", route: "/charts/basic-chart" },
-        ],
+        children: [{ label: "Basic Chart", route: "/charts/basic-chart" }],
       },
       {
         icon: (
@@ -288,9 +304,7 @@ const menuGroups = [
         ),
         label: "Authentication",
         route: "#",
-        children: [
-          { label: "Sign In", route: "/auth/signin" },
-        ],
+        children: [{ label: "Sign In", route: "/auth/signin" }],
       },
     ],
   },
