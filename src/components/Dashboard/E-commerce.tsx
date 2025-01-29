@@ -13,7 +13,11 @@ const ECommerce: React.FC = () => {
     <>
       <DataStatsOne />
 
+<<<<<<< HEAD
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-9 2xl:gap-7.5">
+=======
+      <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 xl:mt-9 xl:gap-7.5">
+>>>>>>> ec8f355 (init commit-statistics)
         <ChartOne />
         <ChartTwo />
         <ChartThree />

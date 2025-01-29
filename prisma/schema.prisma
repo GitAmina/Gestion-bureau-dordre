@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Courrier {
+  id              Int       @id @default(autoincrement())
+  reference       String    @unique
+  type            String // ENUM non supporté en Prisma
+  expediteur      String
+  destinataire    String
+  sujet           String?
+  contenu         String?
+  etat            String    @default("En attente") // ENUM remplacé
+  dateReception   DateTime?
+  dateEnvoi       DateTime?
+  fichierNumerise String?
+  departementId   Int?
+
+  departement Departement? @relation(fields: [departementId], references: [id], onDelete: SetNull)
+  archives    Archive[] // Relation inverse ajoutée
+}
+
+model Utilisateur {
+  id           Int      @id @default(autoincrement())
+  username     String
+  password     String
+  email        String   @unique
+  role         String
+  dateCreation DateTime @default(now())
+  dateUpdate   DateTime @updatedAt
+  creeParId    Int?
+  updateParId  Int?
+
+  creePar   Utilisateur? @relation("CreePar", fields: [creeParId], references: [id], onDelete: SetNull)
+  updatePar Utilisateur? @relation("UpdatePar", fields: [updateParId], references: [id], onDelete: SetNull)
+
+  aCree     Utilisateur[] @relation("CreePar")
+  aMisAJour Utilisateur[] @relation("UpdatePar")
+
+  departements Departement[] @relation("ResponsableDepartement")
+}
+
+model Departement {
+  id            Int          @id @default(autoincrement())
+  nom           String
+  description   String?
+  responsableId Int?
+  responsable   Utilisateur? @relation("ResponsableDepartement", fields: [responsableId], references: [id], onDelete: SetNull)
+  courriers     Courrier[]
+}
+
+model Archive {
+  id              Int      @id @default(autoincrement())
+  courrierId      Int
+  fichierNumerise String
+  categorie       String?
+  dateArchivage   DateTime @default(now())
+
+  courrier Courrier @relation(fields: [courrierId], references: [id], onDelete: Cascade)
+}
+
+model Rapport {
+  id             Int      @id @default(autoincrement())
+  type           String   @default("Mensuel") // Peut être "Mensuel" ou "Annuel"
+  dateGeneration DateTime @default(now())
+  donnees        Json
+  format         String   @default("PDF") // Peut être "PDF" ou "Excel"
+}

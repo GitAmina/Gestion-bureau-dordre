@@ -121,7 +121,11 @@ const dataStatsList = [
 const DataStatsOne: React.FC<dataStats> = () => {
   return (
     <>
+<<<<<<< HEAD
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
+=======
+      <div className="grid grid-cols-4 gap-4 md:grid-cols-4 md:gap-4 xl:grid-cols-4 xl:gap-7.5">
+>>>>>>> ec8f355 (init commit-statistics)
         {dataStatsList.map((item, index) => (
           <div
             key={index}

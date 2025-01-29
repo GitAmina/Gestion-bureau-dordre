@@ -41,6 +41,7 @@ const menuGroups = [
         ),
         label: "Dashboard",
         route: "#",
+<<<<<<< HEAD
         children: [{ label: "eCommerce", route: "/" }],
       },
 
@@ -65,6 +66,10 @@ const menuGroups = [
         children: [
           { label: "Liste des courriers", route: "/courriers" },
           { label: "Ajouter un courrier", route: "/courriers/ajouter" },
+=======
+        children: [
+          { label: "eCommerce", route: "/" },
+>>>>>>> ec8f355 (init commit-statistics)
         ],
       },
       {
@@ -184,7 +189,13 @@ const menuGroups = [
         ),
         label: "Tables",
         route: "#",
+<<<<<<< HEAD
         children: [{ label: "Tables", route: "/tables" }],
+=======
+        children: [
+          { label: "Tables", route: "/tables" },
+        ],
+>>>>>>> ec8f355 (init commit-statistics)
       },
       {
         icon: (
@@ -206,7 +217,13 @@ const menuGroups = [
         ),
         label: "Pages",
         route: "#",
+<<<<<<< HEAD
         children: [{ label: "Settings", route: "/pages/settings" }],
+=======
+        children: [
+          { label: "Settings", route: "/pages/settings" },
+        ],
+>>>>>>> ec8f355 (init commit-statistics)
       },
     ],
   },
@@ -237,7 +254,13 @@ const menuGroups = [
         ),
         label: "Charts",
         route: "#",
+<<<<<<< HEAD
         children: [{ label: "Basic Chart", route: "/charts/basic-chart" }],
+=======
+        children: [
+          { label: "Basic Chart", route: "/charts/basic-chart" },
+        ],
+>>>>>>> ec8f355 (init commit-statistics)
       },
       {
         icon: (
@@ -304,7 +327,13 @@ const menuGroups = [
         ),
         label: "Authentication",
         route: "#",
+<<<<<<< HEAD
         children: [{ label: "Sign In", route: "/auth/signin" }],
+=======
+        children: [
+          { label: "Sign In", route: "/auth/signin" },
+        ],
+>>>>>>> ec8f355 (init commit-statistics)
       },
     ],
   },
