@@ -1,4 +1,3 @@
-// src/app/api/courriers/route.ts
 import mysql from "mysql2/promise";
 
 // Créer la connexion MySQL
