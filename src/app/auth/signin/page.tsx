@@ -1,4 +1,4 @@
--import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
@@ -6,11 +6,23 @@ import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import Signin from "@/components/Auth/Signin";
 
+
+
+import { useRouter } from 'next/navigation';
+import { Router } from "next/router";
 export const metadata: Metadata = {
   title: "Next.js Login Page | NextAdmin - Next.js Dashboard Kit",
   description: "This is Next.js Login Page NextAdmin Dashboard Kit",
 };
-
+const router = useRouter();
+useEffect(() => {
+  // Vérifier si un token existe
+  const token = localStorage.getItem('token');
+  if (!token) {
+    // Rediriger vers la page de connexion si non authentifié
+    router.push('/login');
+  }
+}, [router]);
 const SignIn: React.FC = () => {
   return (
     <DefaultLayout>
