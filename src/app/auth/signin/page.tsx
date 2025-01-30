@@ -14,14 +14,15 @@ export const metadata: Metadata = {
   title: "Next.js Login Page | NextAdmin - Next.js Dashboard Kit",
   description: "This is Next.js Login Page NextAdmin Dashboard Kit",
 };
+const router = useRouter();
 useEffect(() => {
   // Vérifier si un token existe
   const token = localStorage.getItem('token');
   if (!token) {
     // Rediriger vers la page de connexion si non authentifié
-    ruter.push(/login');
+    router.push('/login');
   }
-}, [Router]);
+}, [router]);
 const SignIn: React.FC = () => {
   return (
     <DefaultLayout>
