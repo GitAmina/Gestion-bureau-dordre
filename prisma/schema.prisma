@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Utilisateur {
+  id          Int       @id @default(autoincrement())
+  username    String
+  password    String
+  email       String    @unique
+  role        String
+  dateCreation DateTime @default(now())
+  dateUpdate  DateTime  @updatedAt
+  creePar     Utilisateur? @relation("CreePar", fields: [creeParId], references: [id])
+  creeParId   Int?
+  updatePar   Utilisateur? @relation("UpdatePar", fields: [updateParId], references: [id])
+  updateParId Int?
+
+  utilisateursCree    Utilisateur[] @relation("CreePar")
+  utilisateursUpdate  Utilisateur[] @relation("UpdatePar")
+  departements       Departement[] @relation("Responsable")
+}
+
+model Departement {
+  id           Int       @id @default(autoincrement())
+  nom          String
+  description  String?
+  responsable  Utilisateur? @relation("Responsable", fields: [responsableId], references: [id])
+  responsableId Int?
+
+  courriers Courrier[]
+}
+
+model Courrier {
+  id              Int       @id @default(autoincrement())
+  reference       String    @unique
+  type           String // ENUM('entrant', 'sortant')
+  expediteur      String
+  destinataire    String
+  sujet          String?
+  contenu        String?
+  etat           String @default("En attente") // ENUM('En attente', 'Traité', 'Clôturé')
+  dateReception  DateTime?
+  dateEnvoi      DateTime?
+  fichierNumerise String?
+  departement    Departement? @relation(fields: [departementId], references: [id])
+  departementId  Int?
+
+  archives Archive[]
+}
+
+model Archive {
+  id              Int       @id @default(autoincrement())
+  courrier       Courrier @relation(fields: [courrierId], references: [id])
+  courrierId     Int
+  fichierNumerise String
+  categorie      String?
+  dateArchivage  DateTime @default(now())
+}
+
+model Rapport {
+  id             Int       @id @default(autoincrement())
+  type          String // ENUM('Mensuel', 'Annuel')
+  dateGeneration DateTime @default(now())
+  donnees       Json
+  format        String // ENUM('PDF', 'Excel')
+}
