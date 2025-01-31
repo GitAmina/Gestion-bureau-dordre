@@ -18,7 +18,7 @@ const DatePickerOne: React.FC<DatePickerProps> = ({
   return (
     <div>
       <label className="mb-2 block text-body-sm font-medium text-dark dark:text-white">
-        Date d'envoi
+        Date denvoi
       </label>
       <input
         type="date"
