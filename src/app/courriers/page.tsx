@@ -2,8 +2,14 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify"; // Assurez-vous d'avoir installé react-toastify
 
-// Définition du type de courrier
+// Définition du type de courrier avec des informations supplémentaires
+interface Departement {
+  id: number;
+  nom: string;
+}
+
 interface Courrier {
   id: number;
   reference: string;
@@ -14,22 +20,42 @@ interface Courrier {
   etat: "En attente" | "Traité" | "Clôturé";
   date_reception?: Date;
   date_envoi?: Date;
+  contenu?: string; // Contenu du courrier
+  departement?: Departement; // Département en tant qu'objet
+  fichier_numerise?: string; // Nom du fichier numérisé
 }
 
 export default function Courriers() {
   const [courriers, setCourriers] = useState<Courrier[]>([]);
+  const [selectedCourrier, setSelectedCourrier] = useState<Courrier | null>(
+    null,
+  );
 
   useEffect(() => {
     fetch("/api/courriers")
       .then((response) => response.json())
       .then((data: Courrier[]) => {
-        console.log("Données reçues:", data); // Vérifie ici les données dans la console
+        console.log("Données reçues:", data);
         setCourriers(data);
       })
       .catch((error) => {
         console.error("Erreur lors de la récupération des courriers:", error);
+        toast.error(
+          "Une erreur est survenue lors du chargement des courriers.",
+        );
       });
   }, []);
+
+  // Fonction pour gérer le clic sur l'icône d'information
+  const handleViewDetails = (courrier: Courrier) => {
+    setSelectedCourrier(courrier);
+    toast.success("Les informations du courrier ont été affichées !");
+  };
+
+  // Fonction pour fermer la vue des détails
+  const handleCloseDetails = () => {
+    setSelectedCourrier(null);
+  };
 
   return (
     <DefaultLayout>
@@ -40,25 +66,24 @@ export default function Courriers() {
             <thead>
               <tr className="bg-[#F7F9FC] dark:bg-dark-2">
                 <th className="bg-center px-4 py-4 font-medium text-dark dark:text-white">
-                  Réference
+                  Référence
                 </th>
                 <th className="px-4 py-4 font-medium text-dark dark:text-white">
                   Type
                 </th>
                 <th className="px-4 py-4 font-medium text-dark dark:text-white">
-                  Expediteur
+                  Expéditeur
                 </th>
                 <th className="font-medium text-dark dark:text-white">
                   Destinataire
                 </th>
-
                 <th className="font-medium text-dark dark:text-white">Sujet</th>
                 <th className="font-medium text-dark dark:text-white">Etat</th>
                 <th className="font-medium text-dark dark:text-white">
-                  Date reception
+                  Date réception
                 </th>
                 <th className="font-medium text-dark dark:text-white">
-                  Date envoie
+                  Date envoi
                 </th>
                 <th className="font-medium text-dark dark:text-white">
                   Action
@@ -68,91 +93,48 @@ export default function Courriers() {
             <tbody>
               {courriers.map((courrier) => (
                 <tr key={courrier.id}>
-                  <td
-                    className={`border-[#eee] px-4 py-4 dark:border-dark-3 xl:pl-7.5 ${courrier.id === courriers.length - 1 ? "border-b-0" : "border-b"}`}
-                  >
-                    <h5 className="text-dark dark:text-white">
-                      {courrier.reference}
-                    </h5>
+                  <td className="border-[#eee] px-4 py-4 dark:border-dark-3">
+                    {courrier.reference}
                   </td>
-                  <td
-                    className={`border-[#eee] px-4 py-4 dark:border-dark-3 ${courrier.id === courriers.length - 1 ? "border-b-0" : "border-b"}`}
-                  >
-                    <p className="text-dark dark:text-white">{courrier.type}</p>
+                  <td className="border-[#eee] px-4 py-4 dark:border-dark-3">
+                    {courrier.type}
                   </td>
-                  <td
-                    className={`border-[#eee] px-4 py-4 dark:border-dark-3 ${courrier.id === courriers.length - 1 ? "border-b-0" : "border-b"}`}
-                  >
-                    <p className="text-dark dark:text-white">
-                      {courrier.expediteur}
-                    </p>
+                  <td className="border-[#eee] px-4 py-4 dark:border-dark-3">
+                    {courrier.expediteur}
                   </td>
-                  <td
-                    className={`border-[#eee] px-4 py-4 dark:border-dark-3 ${courrier.id === courriers.length - 1 ? "border-b-0" : "border-b"}`}
-                  >
-                    <p className="text-dark dark:text-white">
-                      {courrier.destinataire}
-                    </p>
+                  <td className="border-[#eee] px-4 py-4 dark:border-dark-3">
+                    {courrier.destinataire}
                   </td>
-                  <td
-                    className={`border-[#eee] px-4 py-4 dark:border-dark-3 ${courrier.id === courriers.length - 1 ? "border-b-0" : "border-b"}`}
-                  >
-                    <p className="text-dark dark:text-white">
-                      {courrier.sujet}
-                    </p>
+                  <td className="border-[#eee] px-4 py-4 dark:border-dark-3">
+                    {courrier.sujet}
                   </td>
-                  <td
-                    className={`border-[#eee] px-4 py-4 dark:border-dark-3 ${courrier.id === courriers.length - 1 ? "border-b-0" : "border-b"}`}
-                  >
-                    <p
-                      className={`inline-flex rounded-full px-3.5 py-1 text-body-sm font-medium ${
-                        courrier.etat === "Clôturé"
-                          ? "bg-[#219653]/[0.08] text-[#219653]"
-                          : courrier.etat === "En attente"
-                            ? "bg-[#D34053]/[0.08] text-[#D34053]"
-                            : "bg-[#FFA70B]/[0.08] text-[#FFA70B]"
-                      }`}
+                  <td className="border-[#eee] px-4 py-4 dark:border-dark-3">
+                    <span
+                      className={`inline-flex rounded-full px-3.5 py-1 text-body-sm font-medium ${courrier.etat === "Clôturé" ? "bg-[#219653]/[0.08] text-[#219653]" : courrier.etat === "En attente" ? "bg-[#D34053]/[0.08] text-[#D34053]" : "bg-[#FFA70B]/[0.08] text-[#FFA70B]"}`}
                     >
                       {courrier.etat}
-                    </p>
+                    </span>
                   </td>
-                  <td
-                    className={`border-[#eee] px-4 py-4 dark:border-dark-3 ${courrier.id === courriers.length - 1 ? "border-b-0" : "border-b"}`}
-                  >
-                    <p className="text-dark dark:text-white">
-                      {courrier.date_reception
-                        ? new Date(courrier.date_reception).toLocaleDateString(
-                            "fr-FR",
-                          ) +
-                          " " +
-                          new Date(courrier.date_reception).toLocaleTimeString(
-                            "fr-FR",
-                            { hour: "2-digit", minute: "2-digit" },
-                          )
-                        : "N/A"}
-                    </p>
+                  <td className="border-[#eee] px-4 py-4 dark:border-dark-3">
+                    {courrier.date_reception
+                      ? new Date(courrier.date_reception).toLocaleDateString(
+                          "fr-FR",
+                        )
+                      : "N/A"}
                   </td>
-                  <td
-                    className={`border-[#eee] px-4 py-4 dark:border-dark-3 ${courrier.id === courriers.length - 1 ? "border-b-0" : "border-b"}`}
-                  >
-                    <p className="text-dark dark:text-white">
-                      {courrier.date_envoi
-                        ? new Date(courrier.date_envoi).toLocaleDateString(
-                            "fr-FR",
-                          ) +
-                          " " +
-                          new Date(courrier.date_envoi).toLocaleTimeString(
-                            "fr-FR",
-                            { hour: "2-digit", minute: "2-digit" },
-                          )
-                        : "N/A"}
-                    </p>
+                  <td className="border-[#eee] px-4 py-4 dark:border-dark-3">
+                    {courrier.date_envoi
+                      ? new Date(courrier.date_envoi).toLocaleDateString(
+                          "fr-FR",
+                        )
+                      : "N/A"}
                   </td>
-                  <td
-                    className={`border-[#eee] px-4 py-4 dark:border-dark-3 xl:pr-7.5 ${courrier.id === courriers.length - 1 ? "border-b-0" : "border-b"}`}
-                  >
+                  <td className="border-[#eee] px-4 py-4 dark:border-dark-3 xl:pr-7.5">
                     <div className="flex items-center justify-end space-x-3.5">
-                      <button className="hover:text-primary">
+                      <button
+                        className="hover:text-primary"
+                        onClick={() => handleViewDetails(courrier)}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="24"
@@ -180,8 +162,7 @@ export default function Courriers() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         >
-                          <path d="M12 20h9"></path>
-                          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                          <path d="M14 2l7 7-12 12-7-7L14 2z"></path>
                         </svg>
                       </button>
                       <button className="hover:text-primary">
@@ -196,11 +177,8 @@ export default function Courriers() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         >
-                          <path d="M3 6h18"></path>
-                          <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                          <path d="M10 11v6"></path>
-                          <path d="M14 11v6"></path>
-                          <path d="M5 6h14l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6z"></path>
+                          <path d="M6 7L18 7"></path>
+                          <path d="M9 7V4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V7M16 7H8V19C8 19.5523 8.44772 20 9 20H15C15.5523 20 16 19.5523 16 19V7Z"></path>
                         </svg>
                       </button>
                       <button className="hover:text-primary">
@@ -215,9 +193,8 @@ export default function Courriers() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         >
-                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                          <polyline points="7 10 12 15 17 10"></polyline>
-                          <line x1="12" y1="15" x2="12" y2="3"></line>
+                          <path d="M4 14L12 22L20 14"></path>
+                          <path d="M12 2V22"></path>
                         </svg>
                       </button>
                     </div>
@@ -228,6 +205,81 @@ export default function Courriers() {
           </table>
         </div>
       </div>
+
+      {/* Affichage des détails du courrier sélectionné */}
+      {selectedCourrier && (
+        <div className="mt-5 rounded-[10px] border border-stroke bg-white p-5 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card">
+          <h2 className="mb-4 text-xl font-semibold text-dark dark:text-white">
+            Détails du courrier
+          </h2>
+          <div className="grid grid-cols-2 gap-4">
+            <p>
+              <strong>Référence:</strong> {selectedCourrier.reference}
+            </p>
+            <p>
+              <strong>Expéditeur:</strong> {selectedCourrier.expediteur}
+            </p>
+            <p>
+              <strong>Destinataire:</strong> {selectedCourrier.destinataire}
+            </p>
+            <p>
+              <strong>Sujet:</strong>{" "}
+              <span className="font-semibold text-blue-600 dark:text-blue-400">
+                {selectedCourrier.sujet || "N/A"}
+              </span>
+            </p>
+            <p>
+              <strong>État:</strong>{" "}
+              <span
+                className={`inline-flex rounded-full px-3.5 py-1 text-body-sm font-medium ${
+                  selectedCourrier.etat === "Clôturé"
+                    ? "bg-[#219653]/[0.08] text-[#219653]"
+                    : selectedCourrier.etat === "En attente"
+                      ? "bg-[#D34053]/[0.08] text-[#D34053]"
+                      : "bg-[#FFA70B]/[0.08] text-[#FFA70B]"
+                }`}
+              >
+                {selectedCourrier.etat}
+              </span>
+            </p>
+            <p>
+              <strong>Département:</strong>{" "}
+              {selectedCourrier.departement?.nom || "N/A"}
+            </p>
+            <p>
+              <strong>Date réception:</strong>{" "}
+              <span className="font-medium text-gray-700 dark:text-gray-300">
+                {selectedCourrier.date_reception
+                  ? new Date(
+                      selectedCourrier.date_reception,
+                    ).toLocaleDateString("fr-FR")
+                  : "N/A"}
+              </span>
+            </p>
+            <p>
+              <strong>Date envoi:</strong>{" "}
+              <span className="font-medium text-gray-700 dark:text-gray-300">
+                {selectedCourrier.date_envoi
+                  ? new Date(selectedCourrier.date_envoi).toLocaleDateString(
+                      "fr-FR",
+                    )
+                  : "N/A"}
+              </span>
+            </p>
+            <p className="col-span-2">
+              <strong>Contenu:</strong> {selectedCourrier.contenu || "N/A"}
+            </p>
+          </div>
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={handleCloseDetails}
+              className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      )}
     </DefaultLayout>
   );
 }

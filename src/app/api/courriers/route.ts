@@ -1,6 +1,7 @@
+import { NextRequest, NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 
-// Créer la connexion MySQL
+// Connexion à la base de données
 const pool = mysql.createPool({
   host: "localhost",
   user: "root",
@@ -8,41 +9,29 @@ const pool = mysql.createPool({
   database: "bureau_ordre",
 });
 
-interface Courrier {
-  id: number;
-  reference: string;
-  type: "entrant" | "sortant";
-  expediteur: string;
-  destinataire: string;
-  sujet?: string;
-  etat: "En attente" | "Traité" | "Cloturé";
-  date_reception?: Date;
-  date_envoi?: Date;
-}
-
-// Fonction handler de l'API pour récupérer les courriers
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const [rows] = await pool.execute("SELECT * FROM Courrier");
+    // Effectuer une jointure entre les courriers et les départements pour récupérer le nom du département
+    const [courriers] = await pool.execute(`
+      SELECT 
+        c.id, c.reference, c.type, c.expediteur, c.destinataire, c.sujet, 
+        c.etat, c.date_reception, c.date_envoi, c.contenu, 
+        d.id AS departement_id, d.nom AS departement_nom
+      FROM Courrier c
+      LEFT JOIN Departement d ON c.departement_id = d.id
+    `);
 
-    // Conversion des dates en objets Date
-    const courriers = (rows as Courrier[]).map((courrier) => ({
+    // courriers est maintenant typé comme un tableau d'objets, vous pouvez l'utiliser avec map
+    const courriersMapped = (courriers as Array<any>).map((courrier: any) => ({
       ...courrier,
-      date_reception: courrier.date_reception
-        ? new Date(courrier.date_reception)
-        : undefined,
-      date_envoi: courrier.date_envoi
-        ? new Date(courrier.date_envoi)
+      departement: courrier.departement_nom
+        ? { id: courrier.departement_id, nom: courrier.departement_nom }
         : undefined,
     }));
 
-    return new Response(JSON.stringify(courriers), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    return NextResponse.json(courriersMapped, { status: 200 });
   } catch (error) {
-    return new Response("Error fetching courriers", { status: 500 });
+    console.error("Erreur lors de la récupération des courriers:", error);
+    return NextResponse.json({ message: "Erreur serveur" }, { status: 500 });
   }
 }
