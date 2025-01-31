@@ -1,23 +1,66 @@
 import { ApexOptions } from "apexcharts";
-import React from "react";
+import React, { useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import DefaultSelectOption from "@/components/SelectOption/DefaultSelectOption";
 
 const ChartOne: React.FC = () => {
-  const series = [
-    {
-      name: "Received Amount",
-      data: [0, 20, 35, 45, 35, 55, 65, 50, 65, 75, 60, 75],
-    },
-    {
-      name: "Due Amount",
-      data: [15, 9, 17, 32, 25, 68, 80, 68, 84, 94, 74, 62],
-    },
-  ];
+  const [viewMode, setViewMode] = useState<"weekly" | "monthly" | "yearly">(
+    "monthly",
+  );
+
+  // Données statiques en fonction du mode sélectionné
+  const getData = () => {
+    if (viewMode === "weekly") {
+      return {
+        categories: ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
+        series: [
+          { name: "Courriers Entrants", data: [5, 10, 15, 7, 20, 13, 9] },
+          { name: "Courriers Sortants", data: [3, 8, 12, 5, 17, 10, 6] },
+        ],
+      };
+    } else if (viewMode === "monthly") {
+      return {
+        categories: [
+          "Jan",
+          "Fév",
+          "Mar",
+          "Avr",
+          "Mai",
+          "Juin",
+          "Juil",
+          "Août",
+          "Sept",
+          "Oct",
+          "Nov",
+          "Déc",
+        ],
+        series: [
+          {
+            name: "Courriers Entrants",
+            data: [30, 45, 60, 50, 70, 90, 85, 60, 75, 95, 80, 100],
+          },
+          {
+            name: "Courriers Sortants",
+            data: [25, 35, 50, 40, 60, 85, 70, 55, 65, 80, 75, 90],
+          },
+        ],
+      };
+    } else {
+      return {
+        categories: ["2021", "2022", "2023", "2024", "2025"],
+        series: [
+          { name: "Courriers Entrants", data: [500, 700, 800, 1000, 1100] },
+          { name: "Courriers Sortants", data: [400, 600, 750, 900, 1050] },
+        ],
+      };
+    }
+  };
+
+  const { categories, series } = getData();
 
   const options: ApexOptions = {
     legend: {
-      show: false,
+      show: true,
       position: "top",
       horizontalAlign: "left",
     },
@@ -36,139 +79,125 @@ const ChartOne: React.FC = () => {
         opacityTo: 0,
       },
     },
-    responsive: [
-      {
-        breakpoint: 1024,
-        options: {
-          chart: {
-            height: 300,
-          },
-        },
-      },
-      {
-        breakpoint: 1366,
-        options: {
-          chart: {
-            height: 320,
-          },
-        },
-      },
-    ],
     stroke: {
       curve: "smooth",
     },
-
     markers: {
       size: 0,
     },
     grid: {
       strokeDashArray: 5,
-      xaxis: {
-        lines: {
-          show: false,
-        },
-      },
       yaxis: {
-        lines: {
-          show: true,
-        },
+        lines: { show: true },
       },
     },
     dataLabels: {
       enabled: false,
     },
-    tooltip: {
-      fixed: {
-        enabled: !1,
-      },
-      x: {
-        show: !1,
-      },
-      y: {
-        title: {
-          formatter: function (e) {
-            return "";
-          },
-        },
-      },
-      marker: {
-        show: !1,
-      },
-    },
     xaxis: {
       type: "category",
-      categories: [
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-      ],
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
+      categories,
     },
     yaxis: {
       title: {
-        style: {
-          fontSize: "0px",
-        },
+        style: { fontSize: "0px" },
       },
     },
   };
 
   return (
-    <div className="col-span-12 rounded-[10px] bg-white px-7.5 pb-6 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card xl:col-span-7">
+    <div className="col-span-12 rounded-[10px] bg-white px-7.5 pb-6 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card ">
       <div className="mb-3.5 flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h4 className="text-body-2xlg font-bold text-dark dark:text-white">
-            Payments Overview
-          </h4>
-        </div>
-        <div className="flex items-center gap-2.5">
-          <p className="font-medium uppercase text-dark dark:text-dark-6">
-            Short by:
-          </p>
-          <DefaultSelectOption options={["Monthly", "Yearly"]} />
-        </div>
+        <h4 className="text-body-2xlg font-bold text-dark dark:text-white">
+          Évolution des Courriers
+        </h4>
+        <DefaultSelectOption
+          options={["Hebdomadaire", "Mensuel", "Annuel"]}
+          onChange={(value: String) =>
+            setViewMode(
+              value === "Hebdomadaire"
+                ? "weekly"
+                : value === "Mensuel"
+                  ? "monthly"
+                  : "yearly",
+            )
+          }
+        />
       </div>
-      <div>
-        <div className="-ml-4 -mr-5">
-          <ReactApexChart
-            options={options}
-            series={series}
-            type="area"
-            height={310}
-          />
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-2 text-center xsm:flex-row xsm:gap-0">
-        <div className="border-stroke dark:border-dark-3 xsm:w-1/2 xsm:border-r">
-          <p className="font-medium">Received Amount</p>
-          <h4 className="mt-1 text-xl font-bold text-dark dark:text-white">
-            $45,070.00
-          </h4>
-        </div>
-        <div className="xsm:w-1/2">
-          <p className="font-medium">Due Amount</p>
-          <h4 className="mt-1 text-xl font-bold text-dark dark:text-white">
-            $32,400.00
-          </h4>
-        </div>
-      </div>
+      <ReactApexChart
+        options={options}
+        series={series}
+        type="area"
+        height={310}
+      />
     </div>
   );
 };
 
 export default ChartOne;
+
+//---------------------recuperer les donnees dynamiquement-----------------
+
+// import { ApexOptions } from "apexcharts";
+// import React, { useState, useEffect } from "react";
+// import ReactApexChart from "react-apexcharts";
+// import DefaultSelectOption from "@/components/SelectOption/DefaultSelectOption";
+// import axios from "axios";
+//
+// const ChartCourriers: React.FC = () => {
+//   const [timeFrame, setTimeFrame] = useState("monthly");
+//   const [series, setSeries] = useState([
+//     { name: "Courriers Entrants", data: [] },
+//     { name: "Courriers Sortants", data: [] },
+//   ]);
+//   const [categories, setCategories] = useState([]);
+//
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const response = await axios.get(`/api/courriers?timeFrame=${timeFrame}`);
+//         setSeries([
+//           { name: "Courriers Entrants", data: response.data.entrants },
+//           { name: "Courriers Sortants", data: response.data.sortants },
+//         ]);
+//         setCategories(response.data.categories);
+//       } catch (error) {
+//         console.error("Erreur lors de la récupération des données", error);
+//       }
+//     };
+//
+//     fetchData();
+//   }, [timeFrame]);
+//
+//   const options: ApexOptions = {
+//     legend: { show: false, position: "top", horizontalAlign: "left" },
+//     colors: ["#5750F1", "#0ABEF9"],
+//     chart: { fontFamily: "Satoshi, sans-serif", height: 310, type: "area", toolbar: { show: false } },
+//     fill: { gradient: { opacityFrom: 0.55, opacityTo: 0 } },
+//     stroke: { curve: "smooth" },
+//     markers: { size: 0 },
+//     grid: { strokeDashArray: 5 },
+//     dataLabels: { enabled: false },
+//     tooltip: {
+//       x: { show: false },
+//       y: { title: { formatter: () => "" } },
+//       marker: { show: false },
+//     },
+//     xaxis: { type: "category", categories, axisBorder: { show: false }, axisTicks: { show: false } },
+//     yaxis: { title: { style: { fontSize: "0px" } } },
+//   };
+//
+//   return (
+//     <div className="col-span-12 rounded-[10px] bg-white px-7.5 pb-6 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card xl:col-span-7">
+//       <div className="mb-3.5 flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+//         <h4 className="text-body-2xlg font-bold text-dark dark:text-white">Évolution des Courriers</h4>
+//         <DefaultSelectOption options={["Hebdomadaire", "Mensuelle", "Annuelle"]} onChange={(value) => setTimeFrame(value.toLowerCase())} />
+//       </div>
+//       <div className="-ml-4 -mr-5">
+//         <ReactApexChart options={options} series={series} type="area" height={310} />
+//       </div>
+//     </div>
+//   );
+// };
+//
+// export default ChartCourriers;
