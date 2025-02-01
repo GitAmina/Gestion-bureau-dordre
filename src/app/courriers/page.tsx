@@ -1,8 +1,10 @@
+//src/app/courriers/page.tsx
 "use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify"; // Assurez-vous d'avoir installé react-toastify
+import { toast } from "react-toastify";
+import Link from "next/link";
 
 // Définition du type de courrier avec des informations supplémentaires
 interface Departement {
@@ -55,6 +57,34 @@ export default function Courriers() {
   // Fonction pour fermer la vue des détails
   const handleCloseDetails = () => {
     setSelectedCourrier(null);
+  };
+
+  // Fonction pour gérer la suppression d'un courrier
+  const handleDelete = async (courrierId: number) => {
+    const isConfirmed = window.confirm(
+      "Voulez-vous vraiment supprimer ce courrier ?",
+    );
+
+    if (!isConfirmed) return;
+
+    try {
+      const response = await fetch(`/api/courriers/${courrierId}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json(); // Récupère le message retourné par l'API
+      console.log("Réponse API :", data);
+
+      if (response.ok) {
+        setCourriers(courriers.filter((c) => c.id !== courrierId));
+        toast.success("Le courrier a été supprimé avec succès !");
+      } else {
+        toast.error(`Erreur : ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Erreur de suppression :", error);
+      toast.error("Impossible de supprimer le courrier.");
+    }
   };
 
   return (
@@ -150,22 +180,28 @@ export default function Courriers() {
                           <circle cx="12" cy="12" r="3"></circle>
                         </svg>
                       </button>
-                      <button className="hover:text-primary">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M14 2l7 7-12 12-7-7L14 2z"></path>
-                        </svg>
-                      </button>
-                      <button className="hover:text-primary">
+                      <Link href={`/courriers/modifier/${courrier.id}`}>
+                        <button className="hover:text-primary">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M14 2l7 7-12 12-7-7L14 2z"></path>
+                          </svg>
+                        </button>
+                      </Link>
+
+                      <button
+                        className="hover:text-primary"
+                        onClick={() => handleDelete(courrier.id)}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="24"
@@ -181,6 +217,7 @@ export default function Courriers() {
                           <path d="M9 7V4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V7M16 7H8V19C8 19.5523 8.44772 20 9 20H15C15.5523 20 16 19.5523 16 19V7Z"></path>
                         </svg>
                       </button>
+
                       <button className="hover:text-primary">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -214,22 +251,22 @@ export default function Courriers() {
           </h2>
           <div className="grid grid-cols-2 gap-4">
             <p>
-              <strong>Référence:</strong> {selectedCourrier.reference}
+              <strong>Référence :</strong> {selectedCourrier.reference}
             </p>
             <p>
-              <strong>Expéditeur:</strong> {selectedCourrier.expediteur}
+              <strong>Expéditeur :</strong> {selectedCourrier.expediteur}
             </p>
             <p>
-              <strong>Destinataire:</strong> {selectedCourrier.destinataire}
+              <strong>Destinataire :</strong> {selectedCourrier.destinataire}
             </p>
             <p>
-              <strong>Sujet:</strong>{" "}
+              <strong>Sujet :</strong>{" "}
               <span className="font-semibold text-blue-600 dark:text-blue-400">
                 {selectedCourrier.sujet || "N/A"}
               </span>
             </p>
             <p>
-              <strong>État:</strong>{" "}
+              <strong>État :</strong>{" "}
               <span
                 className={`inline-flex rounded-full px-3.5 py-1 text-body-sm font-medium ${
                   selectedCourrier.etat === "Clôturé"
@@ -243,11 +280,11 @@ export default function Courriers() {
               </span>
             </p>
             <p>
-              <strong>Département:</strong>{" "}
+              <strong>Département :</strong>{" "}
               {selectedCourrier.departement?.nom || "N/A"}
             </p>
             <p>
-              <strong>Date réception:</strong>{" "}
+              <strong>Date réception :</strong>{" "}
               <span className="font-medium text-gray-700 dark:text-gray-300">
                 {selectedCourrier.date_reception
                   ? new Date(
@@ -257,7 +294,7 @@ export default function Courriers() {
               </span>
             </p>
             <p>
-              <strong>Date envoi:</strong>{" "}
+              <strong>Date envoi :</strong>{" "}
               <span className="font-medium text-gray-700 dark:text-gray-300">
                 {selectedCourrier.date_envoi
                   ? new Date(selectedCourrier.date_envoi).toLocaleDateString(
@@ -267,7 +304,7 @@ export default function Courriers() {
               </span>
             </p>
             <p className="col-span-2">
-              <strong>Contenu:</strong> {selectedCourrier.contenu || "N/A"}
+              <strong>Contenu :</strong> {selectedCourrier.contenu || "N/A"}
             </p>
           </div>
           <div className="mt-4 flex justify-end">
