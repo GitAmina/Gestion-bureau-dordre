@@ -22,7 +22,7 @@ model Courrier {
   sujet           String?
   contenu         String?
   etat            String    @default("En attente") // ENUM remplacé
-  dateReception   DateTime?
+  dateReception   DateTime  @default(now())
   dateEnvoi       DateTime?
   fichierNumerise String?
   departementId   Int?

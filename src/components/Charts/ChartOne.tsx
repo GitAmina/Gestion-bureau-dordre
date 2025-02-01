@@ -191,7 +191,7 @@ export default ChartOne;
 //     <div className="col-span-12 rounded-[10px] bg-white px-7.5 pb-6 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card xl:col-span-7">
 //       <div className="mb-3.5 flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
 //         <h4 className="text-body-2xlg font-bold text-dark dark:text-white">Évolution des Courriers</h4>
-//         <DefaultSelectOption options={["Hebdomadaire", "Mensuelle", "Annuelle"]} onChange={(value) => setTimeFrame(value.toLowerCase())} />
+//         <DefaultSelectOption options={["Hebdomadaire", "Mensuelle", "Annuelle"]} onChange={(value : string) => setTimeFrame(value.toLowerCase())} />
 //       </div>
 //       <div className="-ml-4 -mr-5">
 //         <ReactApexChart options={options} series={series} type="area" height={310} />
