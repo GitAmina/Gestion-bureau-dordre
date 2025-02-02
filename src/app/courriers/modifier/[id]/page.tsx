@@ -1,3 +1,4 @@
+// src/app/courriers/modifier/[id]/page.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
@@ -50,11 +51,28 @@ const ModifierCourrier = () => {
       return;
     }
 
+    // Trouver l'ID du département correspondant au nom
+    const selectedDepartement = departements.find(
+      (dep) => dep.nom === formData.departement,
+    );
+
+    if (!selectedDepartement) {
+      toast.error("Département invalide !");
+      return;
+    }
+
+    const dataToSend = {
+      ...formData,
+      departement: selectedDepartement.id, // Envoyer l'ID du département
+      date_envoi: formData.date_envoi || null, // Envoyer null si la date est vide
+      date_reception: formData.date_reception || null, // Envoyer null si la date est vide
+    };
+
     try {
       const response = await fetch(`/api/courriers/${courrierId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSend),
       });
 
       const result = await response.json();
@@ -96,73 +114,81 @@ const ModifierCourrier = () => {
 
   const fetchData = async (courrierId: string) => {
     try {
+      // Récupérer les données du courrier
       const response = await fetch(`/api/courriers/${courrierId}`);
       const data = await response.json();
 
-      // Assurez-vous que les dates sont formatées avant de les mettre dans le formData
+      // Récupérer le département associé au courrier
+      const departementResponse = await fetch(
+        `/api/courriers/${courrierId}/departement`,
+      );
+      const departementData = await departementResponse.json();
+
+      // Formater les données
       const formattedData = {
         ...data,
-        date_envoi: data.date_envoi ? data.date_envoi.split("T")[0] : "",
+        date_envoi: data.date_envoi ? data.date_envoi.split("T")[0] : null, // Définir comme null si vide
         date_reception: data.date_reception
           ? data.date_reception.split("T")[0]
-          : "",
+          : null, // Définir comme null si vide
+        departement: departementData.nom || "", // Utiliser le nom du département
       };
 
-      setFormData((prevData) => ({
-        ...prevData,
-        ...formattedData,
-        departement: formattedData.departement || "",
-      }));
+      setFormData(formattedData);
     } catch (error) {
       toast.error("Erreur de récupération du courrier !");
     }
   };
 
   useEffect(() => {
-    flatpickr("#date_envoi", {
-      dateFormat: "Y-m-d",
-      disableMobile: true,
-      nextArrow: "→",
-      prevArrow: "←",
-      locale: {
-        firstDayOfWeek: 1,
-      },
-      onChange: (selectedDates: Date[]) => {
-        if (selectedDates[0]) {
-          const correctedDate = new Date(
-            selectedDates[0].getTime() -
-              selectedDates[0].getTimezoneOffset() * 60000,
-          );
-          setFormData((prevData) => ({
-            ...prevData,
-            date_envoi: correctedDate.toISOString().split("T")[0],
-          }));
-        }
-      },
-    });
+    if (isClient) {
+      // Initialiser Flatpickr pour le champ date_envoi
+      flatpickr("#date_envoi", {
+        dateFormat: "Y-m-d",
+        disableMobile: true,
+        nextArrow: "→",
+        prevArrow: "←",
+        locale: {
+          firstDayOfWeek: 1,
+        },
+        onChange: (selectedDates: Date[]) => {
+          if (selectedDates[0]) {
+            const correctedDate = new Date(
+              selectedDates[0].getTime() -
+                selectedDates[0].getTimezoneOffset() * 60000,
+            );
+            setFormData((prevData) => ({
+              ...prevData,
+              date_envoi: correctedDate.toISOString().split("T")[0],
+            }));
+          }
+        },
+      });
 
-    flatpickr("#date_reception", {
-      dateFormat: "Y-m-d",
-      disableMobile: true,
-      nextArrow: "→",
-      prevArrow: "←",
-      locale: {
-        firstDayOfWeek: 1,
-      },
-      onChange: (selectedDates: Date[]) => {
-        if (selectedDates[0]) {
-          const correctedDate = new Date(
-            selectedDates[0].getTime() -
-              selectedDates[0].getTimezoneOffset() * 60000,
-          );
-          setFormData((prevData) => ({
-            ...prevData,
-            date_reception: correctedDate.toISOString().split("T")[0],
-          }));
-        }
-      },
-    });
-  }, []);
+      // Initialiser Flatpickr pour le champ date_reception
+      flatpickr("#date_reception", {
+        dateFormat: "Y-m-d",
+        disableMobile: true,
+        nextArrow: "→",
+        prevArrow: "←",
+        locale: {
+          firstDayOfWeek: 1,
+        },
+        onChange: (selectedDates: Date[]) => {
+          if (selectedDates[0]) {
+            const correctedDate = new Date(
+              selectedDates[0].getTime() -
+                selectedDates[0].getTimezoneOffset() * 60000,
+            );
+            setFormData((prevData) => ({
+              ...prevData,
+              date_reception: correctedDate.toISOString().split("T")[0],
+            }));
+          }
+        },
+      });
+    }
+  }, [isClient]); // Dépendance sur isClient
 
   if (!isClient) return null;
 
@@ -170,10 +196,6 @@ const ModifierCourrier = () => {
     <DefaultLayout>
       <Breadcrumb pageName="Modification d'un courrier" />
       <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Modifier un courrier
-        </h3>
-
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <InputGroup
             label="Référence"
@@ -201,37 +223,44 @@ const ModifierCourrier = () => {
               required
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium">Type</label>
+
+          {/* Type & État */}
+          <div className="flex gap-4.5">
+            <div className="w-1/2">
+              <label className="mb-2 block text-body-sm font-medium text-dark dark:text-white">
+                Type
+              </label>
               <select
                 name="type"
-                value={formData.type || ""} // Affichage vide si pas de type sélectionné
+                value={formData.type}
                 onChange={handleChange}
                 required
-                className="w-full rounded border p-2"
+                className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5 py-3 text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
               >
-                <option value="">Sélectionnez un type</option>
+                <option value="">Sélectionnez le type</option>
                 <option value="Entrant">Entrant</option>
                 <option value="Sortant">Sortant</option>
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium">État</label>
+            <div className="w-1/2">
+              <label className="mb-2 block text-body-sm font-medium text-dark dark:text-white">
+                État
+              </label>
               <select
                 name="etat"
-                value={formData.etat || ""} // Affichage vide si pas d'état sélectionné
+                value={formData.etat}
                 onChange={handleChange}
                 required
-                className="w-full rounded border p-2"
+                className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5 py-3 text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
               >
-                <option value="">Sélectionnez un état</option>
+                <option value="">Sélectionnez état</option>
                 <option value="En attente">En attente</option>
                 <option value="Traité">Traité</option>
                 <option value="Clôturé">Clôturé</option>
               </select>
             </div>
           </div>
+
           {/* Dates */}
           <div className="flex gap-4.5">
             <div className="w-1/2">
@@ -280,13 +309,14 @@ const ModifierCourrier = () => {
               </label>
               <select
                 name="departement"
-                value={formData.departement || ""} // Affichage vide si pas de département
+                value={formData.departement || ""}
                 onChange={handleChange}
+                required
                 className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5 py-3 text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
               >
                 <option value="">Sélectionnez un département</option>
                 {departements.map((departement) => (
-                  <option key={departement.id} value={departement.id}>
+                  <option key={departement.id} value={departement.nom}>
                     {departement.nom}
                   </option>
                 ))}
@@ -320,6 +350,7 @@ const ModifierCourrier = () => {
               onChange={handleChange}
               placeholder="Entrez le nom du fichier"
               customClasses="w-full"
+              required
             />
           </div>
           <button

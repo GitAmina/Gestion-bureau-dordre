@@ -186,6 +186,7 @@ const AjouterCourrier = () => {
                     name="etat"
                     value={formData.etat}
                     onChange={handleChange}
+                    required
                     className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5 py-3 text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
                   >
                     <option value="">Sélectionnez état</option>
@@ -270,6 +271,7 @@ const AjouterCourrier = () => {
                     name="departement"
                     value={formData.departement}
                     onChange={handleChange}
+                    required
                     className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5 py-3 text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
                   >
                     <option value="">Sélectionnez un département</option>
@@ -308,6 +310,7 @@ const AjouterCourrier = () => {
                   onChange={handleChange}
                   placeholder="Entrez le nom du fichier"
                   customClasses="w-full"
+                  required
                 />
               </div>
 
