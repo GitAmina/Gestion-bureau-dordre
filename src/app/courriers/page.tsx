@@ -15,7 +15,7 @@ interface Departement {
 interface Courrier {
   id: number;
   reference: string;
-  type: "entrant" | "sortant";
+  type: "Entrant" | "Sortant";
   expediteur: string;
   destinataire: string;
   sujet?: string;
@@ -32,6 +32,12 @@ export default function Courriers() {
   const [selectedCourrier, setSelectedCourrier] = useState<Courrier | null>(
     null,
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Nombre d'éléments par page
+  const [sortBy, setSortBy] = useState<"Entrant" | "Sortant" | "date" | null>(
+    null,
+  ); // Pour le trie
+  const [favorites, setFavorites] = useState<number[]>([]);
 
   useEffect(() => {
     fetch("/api/courriers")
@@ -87,11 +93,89 @@ export default function Courriers() {
     }
   };
 
+  // Variable de pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  // Fonction de trie
+  const sortedCourriers = [...courriers]
+    .filter((c) => {
+      if (sortBy === "Entrant") return c.type === "Entrant";
+      if (sortBy === "Sortant") return c.type === "Sortant";
+      return true; // Afficher tout si aucun filtre spécifique
+    })
+    .sort((a, b) => {
+      if (sortBy === "Entrant") {
+        return (
+          (b.date_reception ? new Date(b.date_reception).getTime() : 0) -
+          (a.date_reception ? new Date(a.date_reception).getTime() : 0)
+        );
+      }
+      if (sortBy === "Sortant") {
+        return (
+          (b.date_envoi ? new Date(b.date_envoi).getTime() : 0) -
+          (a.date_envoi ? new Date(a.date_envoi).getTime() : 0)
+        );
+      }
+      if (sortBy === "date") {
+        const dateA = a.date_reception || a.date_envoi;
+        const dateB = b.date_reception || b.date_envoi;
+        return (
+          (dateB ? new Date(dateB).getTime() : 0) -
+          (dateA ? new Date(dateA).getTime() : 0)
+        );
+      }
+      return 0;
+    });
+
+  // Tableau paginer et trier
+  const currentCourriers = sortedCourriers.slice(
+    indexOfFirstItem,
+    indexOfLastItem,
+  );
+
+  // Pour mettre un courrier en favorie
+  const handleFavoriteToggle = (courrierId: number) => {
+    setFavorites((prevFavorites) =>
+      prevFavorites.includes(courrierId)
+        ? prevFavorites.filter((id) => id !== courrierId)
+        : [...prevFavorites, courrierId],
+    );
+  };
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Liste des courriers" />
       <div className="rounded-[10px] border border-stroke bg-white p-4 shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:p-7.5">
         <div className="max-w-full overflow-x-auto">
+          {/* Bouton de trie */}
+          <div className="mt-4 flex items-center justify-between">
+            <button
+              onClick={() => setSortBy("Entrant")}
+              className="rounded bg-blue-400 px-4 py-2 text-white"
+            >
+              Trier par Entrant
+            </button>
+            <button
+              onClick={() => setSortBy("Sortant")}
+              className="rounded bg-green-400 px-4 py-2 text-white"
+            >
+              Trier par Sortant
+            </button>
+            <button
+              onClick={() => setSortBy("date")}
+              className="rounded bg-gray-400 px-4 py-2 text-white"
+            >
+              Trier par Date
+            </button>
+            <button
+              onClick={() => setSortBy(null)}
+              className="rounded bg-red-400 px-4 py-2 text-white"
+            >
+              Réinitialiser
+            </button>
+          </div>
+          <br />
           <table className="w-full table-auto">
             <thead>
               <tr className="bg-[#F7F9FC] dark:bg-dark-2">
@@ -121,7 +205,7 @@ export default function Courriers() {
               </tr>
             </thead>
             <tbody>
-              {courriers.map((courrier) => (
+              {currentCourriers.map((courrier) => (
                 <tr key={courrier.id}>
                   <td className="border-[#eee] px-4 py-4 dark:border-dark-3">
                     {courrier.reference}
@@ -218,6 +302,31 @@ export default function Courriers() {
                         </svg>
                       </button>
 
+                      <button
+                        className="hover:text-green-500"
+                        onClick={() => handleFavoriteToggle(courrier.id)}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill={
+                            favorites.includes(courrier.id) ? "green" : "none"
+                          }
+                          stroke={
+                            favorites.includes(courrier.id)
+                              ? "green"
+                              : "currentColor"
+                          }
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <polygon points="12 17.27 18.18 21 15.54 13.97 21 9.24 13.81 8.63 12 2 10.19 8.63 3 9.24 8.46 13.97 5.82 21" />
+                        </svg>
+                      </button>
+
                       <button className="hover:text-primary">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -241,6 +350,43 @@ export default function Courriers() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Bouton de pagination */}
+      <div className="mt-4 flex items-center justify-between">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className={`rounded px-4 py-2 ${currentPage === 1 ? "bg-gray-300" : "bg-indigo-500 text-white hover:bg-indigo-500"}`}
+        >
+          Précédent
+        </button>
+
+        <span>
+          Page {currentPage} /{" "}
+          {Math.max(1, Math.ceil(sortedCourriers.length / itemsPerPage))}
+        </span>
+
+        <button
+          onClick={() =>
+            setCurrentPage((prev) =>
+              Math.min(
+                prev + 1,
+                Math.ceil(sortedCourriers.length / itemsPerPage),
+              ),
+            )
+          }
+          disabled={
+            currentPage === Math.ceil(sortedCourriers.length / itemsPerPage)
+          }
+          className={`rounded px-4 py-2 ${
+            currentPage === Math.ceil(sortedCourriers.length / itemsPerPage)
+              ? "bg-gray-300"
+              : "bg-indigo-500 text-white hover:bg-indigo-500"
+          }`}
+        >
+          Suivant
+        </button>
       </div>
 
       {/* Affichage des détails du courrier sélectionné */}
