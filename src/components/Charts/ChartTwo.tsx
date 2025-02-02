@@ -137,7 +137,9 @@ const ChartTwo: React.FC = () => {
 
   useEffect(() => {
     console.log("useEffect exécuté !");
-    fetch(`/api/courriers?week=${selectedWeek === "last" ? "last" : "current"}`)
+    fetch(
+      `/api/getcourriers?week=${selectedWeek === "last" ? "last" : "current"}`,
+    )
       .then((res) => res.json())
       .then((data) => {
         console.log("Données récupérées :", data); // Vérifier la structure des données
