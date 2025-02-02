@@ -14,50 +14,49 @@ datasource db {
 }
 
 model Courrier {
-  id              Int       @id @default(autoincrement())
-  reference       String    @unique
-  type            String // ENUM non supporté en Prisma
+  id              Int          @id @default(autoincrement())
+  reference       String       @unique
+  type            String // ENUM('entrant', 'sortant')
   expediteur      String
   destinataire    String
   sujet           String?
   contenu         String?
-  etat            String    @default("En attente") // ENUM remplacé
-  dateReception   DateTime  @default(now())
+  etat            String       @default("En attente") // ENUM('En attente', 'Traité', 'Clôturé')
+  dateReception   DateTime?
   dateEnvoi       DateTime?
   fichierNumerise String?
+  departement     Departement? @relation(fields: [departementId], references: [id])
   departementId   Int?
 
-  departement Departement? @relation(fields: [departementId], references: [id], onDelete: SetNull)
-  archives    Archive[] // Relation inverse ajoutée
+  archives Archive[]
 }
 
 model Utilisateur {
-  id           Int      @id @default(autoincrement())
+  id           Int          @id @default(autoincrement())
   username     String
   password     String
-  email        String   @unique
+  email        String       @unique
   role         String
-  dateCreation DateTime @default(now())
-  dateUpdate   DateTime @updatedAt
+  dateCreation DateTime     @default(now())
+  dateUpdate   DateTime     @updatedAt
+  creePar      Utilisateur? @relation("CreePar", fields: [creeParId], references: [id])
   creeParId    Int?
+  updatePar    Utilisateur? @relation("UpdatePar", fields: [updateParId], references: [id])
   updateParId  Int?
 
-  creePar   Utilisateur? @relation("CreePar", fields: [creeParId], references: [id], onDelete: SetNull)
-  updatePar Utilisateur? @relation("UpdatePar", fields: [updateParId], references: [id], onDelete: SetNull)
-
-  aCree     Utilisateur[] @relation("CreePar")
-  aMisAJour Utilisateur[] @relation("UpdatePar")
-
-  departements Departement[] @relation("ResponsableDepartement")
+  utilisateursCree   Utilisateur[] @relation("CreePar")
+  utilisateursUpdate Utilisateur[] @relation("UpdatePar")
+  departements       Departement[] @relation("Responsable")
 }
 
 model Departement {
   id            Int          @id @default(autoincrement())
   nom           String
   description   String?
+  responsable   Utilisateur? @relation("Responsable", fields: [responsableId], references: [id])
   responsableId Int?
-  responsable   Utilisateur? @relation("ResponsableDepartement", fields: [responsableId], references: [id], onDelete: SetNull)
-  courriers     Courrier[]
+
+  courriers Courrier[]
 }
 
 model Archive {
@@ -72,8 +71,8 @@ model Archive {
 
 model Rapport {
   id             Int      @id @default(autoincrement())
-  type           String   @default("Mensuel") // Peut être "Mensuel" ou "Annuel"
+  type           String // ENUM('Mensuel', 'Annuel')
   dateGeneration DateTime @default(now())
   donnees        Json
-  format         String   @default("PDF") // Peut être "PDF" ou "Excel"
+  format         String // ENUM('PDF', 'Excel')
 }

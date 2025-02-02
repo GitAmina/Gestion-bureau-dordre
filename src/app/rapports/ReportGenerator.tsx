@@ -11,13 +11,13 @@ interface ReportData {
 const ReportGenerator = ({ data }: { data: ReportData[] }) => {
   const [period, setPeriod] = useState("monthly");
 
-  const handleExportPDF = () => {
-    exportToPDF(data, period);
-  };
-
-  const handleExportExcel = () => {
-    exportToExcel(data, period);
-  };
+  // const handleExportPDF = () => {
+  //   exportToPDF(data, period);
+  // };
+  //
+  // const handleExportExcel = () => {
+  //   exportToExcel(data, period);
+  // };
 
   return (
     <div className="rounded bg-white p-4 shadow">
@@ -32,13 +32,13 @@ const ReportGenerator = ({ data }: { data: ReportData[] }) => {
       </select>
       <div className="flex gap-3">
         <button
-          onClick={handleExportPDF}
+          // onClick={handleExportPDF}
           className="rounded bg-red-500 p-2 text-white"
         >
           Exporter en PDF
         </button>
         <button
-          onClick={handleExportExcel}
+          // onClick={handleExportExcel}
           className="rounded bg-green-500 p-2 text-white"
         >
           Exporter en Excel
