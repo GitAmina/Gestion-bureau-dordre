@@ -66,13 +66,13 @@ const Header = (props: {
           </Link>
         </div>
 
-        <div className="hidden xl:block">
-          <div>
-            <h1 className="mb-0.5 text-heading-5 font-bold text-indigo-500 dark:text-white">
-              Gestion de Bureau Ordre
-            </h1>
-          </div>
-        </div>
+        {/*<div className="hidden xl:block">*/}
+        {/*  <div>*/}
+        {/*    <h1 className="mb-0.5 text-heading-5 font-bold text-indigo-500 dark:text-white">*/}
+        {/*      Bureau d'Ordre*/}
+        {/*    </h1>*/}
+        {/*  </div>*/}
+        {/*</div>*/}
 
         <div className="flex items-center justify-normal gap-2 2xsm:gap-4 lg:w-full lg:justify-between xl:w-auto xl:justify-normal">
           <ul className="flex items-center gap-2 2xsm:gap-4">
