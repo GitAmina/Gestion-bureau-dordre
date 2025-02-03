@@ -15,7 +15,7 @@ interface Departement {
 interface Courrier {
   id: number;
   reference: string;
-  type: "Entrant" | "Sortant";
+  type: "entrant" | "sortant";
   expediteur: string;
   destinataire: string;
   sujet?: string;
@@ -33,7 +33,7 @@ export default function Courriers() {
     null,
   );
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Nombre d'éléments par page
+  const itemsPerPage = 10; // Nombre d'éléments par page
   const [sortBy, setSortBy] = useState<"Entrant" | "Sortant" | "date" | null>(
     null,
   ); // Pour le trie
@@ -100,8 +100,8 @@ export default function Courriers() {
   // Fonction de trie
   const sortedCourriers = [...courriers]
     .filter((c) => {
-      if (sortBy === "Entrant") return c.type === "Entrant";
-      if (sortBy === "Sortant") return c.type === "Sortant";
+      if (sortBy === "Entrant") return c.type === "entrant";
+      if (sortBy === "Sortant") return c.type === "sortant";
       return true; // Afficher tout si aucun filtre spécifique
     })
     .sort((a, b) => {
@@ -367,6 +367,12 @@ export default function Courriers() {
           {Math.max(1, Math.ceil(sortedCourriers.length / itemsPerPage))}
         </span>
 
+        <span className="ml-4">
+          Affichés{" "}
+          {Math.min(currentPage * itemsPerPage, sortedCourriers.length)} /{" "}
+          {sortedCourriers.length}
+        </span>
+
         <button
           onClick={() =>
             setCurrentPage((prev) =>
@@ -379,11 +385,7 @@ export default function Courriers() {
           disabled={
             currentPage === Math.ceil(sortedCourriers.length / itemsPerPage)
           }
-          className={`rounded px-4 py-2 ${
-            currentPage === Math.ceil(sortedCourriers.length / itemsPerPage)
-              ? "bg-gray-300"
-              : "bg-indigo-500 text-white hover:bg-indigo-500"
-          }`}
+          className={`rounded px-4 py-2 ${currentPage === Math.ceil(sortedCourriers.length / itemsPerPage) ? "bg-gray-300" : "bg-indigo-500 text-white hover:bg-indigo-500"}`}
         >
           Suivant
         </button>

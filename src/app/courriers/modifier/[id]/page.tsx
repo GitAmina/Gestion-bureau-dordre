@@ -238,8 +238,8 @@ const ModifierCourrier = () => {
                 className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5 py-3 text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
               >
                 <option value="">Sélectionnez le type</option>
-                <option value="Entrant">Entrant</option>
-                <option value="Sortant">Sortant</option>
+                <option value="entrant">entrant</option>
+                <option value="sortant">sortant</option>
               </select>
             </div>
             <div className="w-1/2">
