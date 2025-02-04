@@ -6,7 +6,7 @@
     padding: 0;
     box-sizing: border-box;
   }
-  
+
   body {
     font-family: 'Arial', sans-serif;
     background-color: #f4f6f9;
@@ -17,7 +17,7 @@
     min-height: 100vh;
     margin: 0;
   }
-  
+
   /* Container for the login page */
   div {
     background-color: #ffffff;
@@ -27,7 +27,7 @@
     max-width: 400px;
     width: 90%;
   }
-  
+
   /* Heading styles */
   h1 {
     font-size: 1.8rem;
@@ -35,7 +35,7 @@
     color: #2c3e50;
     text-align: center;
   }
-  
+
   /* Input fields */
   form input {
     width: 100%;
@@ -47,12 +47,12 @@
     background-color: #f9f9f9;
     transition: border-color 0.3s ease-in-out;
   }
-  
+
   form input:focus {
     border-color: #2980b9;
     outline: none;
   }
-  
+
   /* Submit button */
   form button[type="submit"] {
     width: 100%;
@@ -65,11 +65,11 @@
     cursor: pointer;
     transition: background-color 0.3s ease-in-out;
   }
-  
+
   form button[type="submit"]:hover {
     background-color: #1a5276;
   }
-  
+
   /* Secondary button for account creation */
   button {
     width: 100%;
@@ -83,21 +83,21 @@
     cursor: pointer;
     transition: background-color 0.3s ease-in-out;
   }
-  
+
   button:hover {
     background-color: #1e8449;
   }
-  
+
   /* Responsive design */
   @media (max-width: 768px) {
     div {
       padding: 1.5rem;
     }
-  
+
     h1 {
       font-size: 1.5rem;
     }
-  
+
     form input,
     form button[type="submit"],
     button {
@@ -108,7 +108,7 @@
     border-color: #2980b9;
     outline: none;
   }
-  
+
   /* Dropdown (select) styles */
   form select {
     cursor: pointer;
