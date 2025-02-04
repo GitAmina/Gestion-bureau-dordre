@@ -15,7 +15,7 @@ export default async function handler(
 
     // Récupérer tous les rapports de la base de données
     const rapports = await prisma.rapport.findMany({
-      orderBy: { dateGeneration: "desc" }, // Trier par date de génération (du plus récent au plus ancien)
+      orderBy: { date_generation: "desc" }, // Trier par date de génération (du plus récent au plus ancien)
     });
 
     res.status(200).json(rapports);
