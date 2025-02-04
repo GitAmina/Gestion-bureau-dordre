@@ -136,7 +136,7 @@ const ChartTwo: React.FC = () => {
   const [selectedWeek, setSelectedWeek] = useState("current"); // Semaine actuelle par défaut
 
   useEffect(() => {
-    console.log("useEffect exécuté !");
+    console.log(" Requête envoyée avec week =", selectedWeek);
     fetch(
       `/api/getcourriers?week=${selectedWeek === "last" ? "last" : "current"}`,
     )
@@ -167,7 +167,6 @@ const ChartTwo: React.FC = () => {
     fill: { opacity: 1 },
   };
 
-  console.log("📈 ChartTwo est bien monté !");
   return (
     <div className="col-span-12 rounded-[10px] bg-white px-7.5 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card xl:col-span-7 ">
       <div className="mb-15 justify-between gap-4 sm:flex">
@@ -189,6 +188,7 @@ const ChartTwo: React.FC = () => {
       <div>
         <div id="chartTwo" className="-ml-3.5">
           <ReactApexChart
+            key={selectedWeek}
             options={options}
             series={series}
             type="bar"
@@ -199,5 +199,6 @@ const ChartTwo: React.FC = () => {
     </div>
   );
 };
-console.log("📈 ChartTwo est bien monté !");
+
+// console.log(" ChartTwo est bien monté !");
 export default ChartTwo;
