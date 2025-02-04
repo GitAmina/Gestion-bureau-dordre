@@ -141,11 +141,6 @@ const AjouterCourrier = () => {
       <Breadcrumb pageName="Ajout d'un courrier" />
       <div className="gap-9 sm:grid-cols-2">
         <div className="rounded-[10px] border border-stroke bg-white shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card">
-          <div className="border-b border-stroke px-6.5 py-4 dark:border-dark-3">
-            <h3 className="font-semibold text-dark dark:text-white">
-              Formulaire d&apos;ajout de courrier
-            </h3>
-          </div>
           <form onSubmit={handleSubmit}>
             <div className="space-y-4.5 p-6.5">
               {/* Référence */}
@@ -186,6 +181,7 @@ const AjouterCourrier = () => {
                     name="etat"
                     value={formData.etat}
                     onChange={handleChange}
+                    required
                     className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5 py-3 text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
                   >
                     <option value="">Sélectionnez état</option>
@@ -270,6 +266,7 @@ const AjouterCourrier = () => {
                     name="departement"
                     value={formData.departement}
                     onChange={handleChange}
+                    required
                     className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5 py-3 text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
                   >
                     <option value="">Sélectionnez un département</option>
@@ -308,6 +305,7 @@ const AjouterCourrier = () => {
                   onChange={handleChange}
                   placeholder="Entrez le nom du fichier"
                   customClasses="w-full"
+                  required
                 />
               </div>
 

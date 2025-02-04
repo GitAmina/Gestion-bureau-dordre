@@ -1,10 +1,10 @@
+// src/app/api/courriers/[id]/departement/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 
 const pool = mysql.createPool({
   host: "localhost",
   user: "root",
-  password: "123456",
   database: "bureau_ordre",
 });
 
@@ -21,7 +21,7 @@ export async function GET(
     // Récupérer le département du courrier
     const [rows] = await pool.execute(
       `SELECT d.nom FROM Departement d
-       INNER JOIN Courrier c ON c.departement = d.id
+       INNER JOIN Courrier c ON c.departement_id = d.id
        WHERE c.id = ?`,
       [id],
     );
