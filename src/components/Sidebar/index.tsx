@@ -69,6 +69,31 @@ const menuGroups = [
       {
         icon: (
           <svg
+            className="fill-current text-current"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 3v6M12 9H6v6M12 9h6v6M6 15v6h12v-6"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle cx="12" cy="3" r="2" fill="currentColor" />
+            <circle cx="6" cy="15" r="2" fill="currentColor" />
+            <circle cx="18" cy="15" r="2" fill="currentColor" />
+          </svg>
+        ),
+        label: "Département",
+        route: "/departement",
+      },
+
+      {
+        icon: (
+          <svg
             className="fill-current"
             width="24"
             height="24"
@@ -95,31 +120,9 @@ const menuGroups = [
             <rect x="14" y="4" width="4" height="16" fill="currentColor" />
           </svg>
         ),
-        label: "rapports",
+        label: "Rapports",
         route: "/rapports",
       },
-      {
-        icon: (
-          <svg
-            className="fill-current text-current"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 3H21M3 21H21"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        ),
-        label: "Departement",
-        route: "/departement",
-      },
-
       {
         icon: (
           <svg
