@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+/*'use client';
+=======
+>>>>>>> a05f02ef9fd3f29b44c56a215b96ef6da73e3a4f
 import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -83,3 +87,4 @@ const SignIn: React.FC = () => {
 };
 
 export default SignIn;
+*/
