@@ -50,6 +50,37 @@ const menuGroups = [
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
+              d="M3 2H17C18.1046 2 19 2.89543 19 4V20C19 21.1046 18.1046 22 17 22H3C1.89543 22 1 21.1046 1 20V4C1 2.89543 1.89543 2 3 2Z"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M14 2V8H20"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <rect x="4" y="12" width="4" height="8" fill="currentColor" />
+            <rect x="9" y="8" width="4" height="12" fill="currentColor" />
+            <rect x="14" y="4" width="4" height="16" fill="currentColor" />
+          </svg>
+        ),
+        label: "rapports",
+        route: "/rapports",
+      },
+      {
+        icon: (
+          <svg
+            className="fill-current text-current"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
               d="M3 3H21M3 21H21"
               stroke="currentColor"
               strokeWidth="2"
@@ -329,24 +360,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         {/* <!-- SIDEBAR HEADER --> */}
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 xl:py-10">
           <Link href="/">
-            <Image
-              width={176}
-              height={32}
-              src={"/images/logo/logo-dark.svg"}
-              alt="Logo"
-              priority
-              className="dark:hidden"
-              style={{ width: "auto", height: "auto" }}
-            />
-            <Image
-              width={176}
-              height={32}
-              src={"/images/logo/logo.svg"}
-              alt="Logo"
-              priority
-              className="hidden dark:block"
-              style={{ width: "auto", height: "auto" }}
-            />
+            <div className="flex items-center">
+              <Image
+                width={50}
+                height={14}
+                src="/images/logo/logo.png"
+                alt="Logo"
+                priority
+                style={{ width: "auto", height: "auto" }}
+              />
+              <h1 className="mb-0.5 ml-3 bg-gradient-to-r from-purple-500  to-cyan-400 bg-clip-text text-heading-5 font-bold text-transparent dark:text-white">
+                Bureau d'Ordre
+              </h1>
+            </div>
           </Link>
 
           <button
