@@ -19,7 +19,7 @@
   }
 
   /* Container for the login page */
-  div {
+  .div1 {
     background-color: #ffffff;
     padding: 2rem;
     border-radius: 12px;
