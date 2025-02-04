@@ -1,5 +1,4 @@
-
-
+/*'use client';
 import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -87,3 +86,4 @@ const SignIn: React.FC = () => {
 };
 
 export default SignIn;
+*/

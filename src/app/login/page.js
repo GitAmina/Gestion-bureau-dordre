@@ -56,6 +56,7 @@ export default function Login() {
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import  './style.css'; 
+import ECommerce from '@/components/Dashboard/E-commerce';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -92,7 +93,8 @@ export default function Login() {
 
     if (res.status === 200) {
       localStorage.setItem('token', data.token);
-      router.push('/home');
+      router.push('/dashboard');
+      <ECommerce />
     } else {
       alert(data.message);
     }
