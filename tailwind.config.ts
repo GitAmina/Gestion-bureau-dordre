@@ -17,6 +17,7 @@ const config: Config = {
       xsm: "425px",
       "3xl": "2000px",
       ...defaultTheme.screens,
+
     },
     extend: {
       colors: {
