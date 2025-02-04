@@ -1,5 +1,3 @@
-
-
 import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -8,9 +6,7 @@ import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import Signin from "@/components/Auth/Signin";
 
-
-
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import { Router } from "next/router";
 export const metadata: Metadata = {
   title: "Next.js Login Page | NextAdmin - Next.js Dashboard Kit",
@@ -19,10 +15,10 @@ export const metadata: Metadata = {
 const router = useRouter();
 useEffect(() => {
   // Vérifier si un token existe
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   if (!token) {
     // Rediriger vers la page de connexion si non authentifié
-    router.push('/login');
+    router.push("/login");
   }
 }, [router]);
 const SignIn: React.FC = () => {
@@ -42,19 +38,19 @@ const SignIn: React.FC = () => {
             <div className="custom-gradient-1 overflow-hidden rounded-2xl px-12.5 pt-12.5 dark:!bg-dark-2 dark:bg-none">
               <Link className="mb-10 inline-block" href="/">
                 <Image
-                  className="hidden dark:block"
+                  // className="hidden dark:block"
                   src={"/images/logo/logo.svg"}
                   alt="Logo"
                   width={176}
                   height={32}
                 />
-                <Image
-                  className="dark:hidden"
-                  src={"/images/logo/logo-dark.svg"}
-                  alt="Logo"
-                  width={176}
-                  height={32}
-                />
+                {/*<Image*/}
+                {/*  className="dark:hidden"*/}
+                {/*  src={"/images/logo/logo-dark.svg"}*/}
+                {/*  alt="Logo"*/}
+                {/*  width={176}*/}
+                {/*  height={32}*/}
+                {/*/>*/}
               </Link>
               <p className="mb-3 text-xl font-medium text-dark dark:text-white">
                 Sign in to your account
