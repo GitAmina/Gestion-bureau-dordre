@@ -39,19 +39,19 @@ export default async function handler(
       const courriers = await prisma.courrier.findMany({
         where: {
           OR: [
-            { dateReception: { gte: startDate, lte: endDate } },
-            { dateEnvoi: { gte: startDate, lte: endDate } },
+            { date_reception: { gte: startDate, lte: endDate } },
+            { date_envoi: { gte: startDate, lte: endDate } },
           ],
         },
-        select: { dateReception: true, dateEnvoi: true, type: true },
+        select: { date_reception: true, date_envoi: true, type: true },
       });
 
       const daysOfWeek = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
       const entrants: number[] = new Array(7).fill(0);
       const sortants: number[] = new Array(7).fill(0);
 
-      courriers.forEach(({ dateReception, dateEnvoi, type }) => {
-        let date = dateReception || dateEnvoi;
+      courriers.forEach(({ date_reception, date_envoi, type }) => {
+        let date = date_reception || date_envoi;
         if (!date) return;
 
         date = new Date(date);
@@ -82,13 +82,13 @@ export default async function handler(
       const courriers = await prisma.courrier.findMany({
         where: {
           OR: [
-            { dateReception: { gte: startDate, lte: endDate } },
-            { dateEnvoi: { gte: startDate, lte: endDate } },
+            { date_reception: { gte: startDate, lte: endDate } },
+            { date_envoi: { gte: startDate, lte: endDate } },
           ],
         },
         select: {
-          dateReception: true,
-          dateEnvoi: true,
+          date_reception: true,
+          date_envoi: true,
           type: true,
         },
       });
@@ -114,8 +114,8 @@ export default async function handler(
         ];
       } else if (timeFrame === "yearly") {
         const years = new Set();
-        courriers.forEach(({ dateReception, dateEnvoi }) => {
-          const date = dateReception || dateEnvoi;
+        courriers.forEach(({ date_reception, date_envoi }) => {
+          const date = date_reception || date_envoi;
           if (date) years.add(new Date(date).getFullYear());
         });
         categories = Array.from(years).sort().map(String);
@@ -126,8 +126,8 @@ export default async function handler(
         sortants[category] = 0;
       });
 
-      courriers.forEach(({ dateReception, dateEnvoi, type }) => {
-        let date = dateReception || dateEnvoi;
+      courriers.forEach(({ date_reception, date_envoi, type }) => {
+        let date = date_reception || date_envoi;
         if (!date) return;
         date = new Date(date);
 
