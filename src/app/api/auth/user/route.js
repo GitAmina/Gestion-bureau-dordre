@@ -1,49 +1,50 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+
+// app/api/auth/user/route.js
+/*import jwt from 'jsonwebtoken';
+
+export async function GET(request) {
+  const token = request.cookies.get('token'); // Récupérer le token dans les cookies (ou localStorage côté client)
+  if (!token) {
+    return new Response(JSON.stringify({ error: 'Token manquant' }), { status: 401 });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Décoder le token
+    // Ici, tu peux récupérer l'utilisateur dans la base de données si nécessaire
+    const user = {prenom: decoded.prenom, username: decoded.username, email: decoded.email }; // Exemple d'utilisateur
+    return new Response(JSON.stringify(user), { status: 200 });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: 'Token invalide ou expiré' }), { status: 401 });
+  }
+}*/
 import jwt from 'jsonwebtoken';
-import db from '../../../lib/db'; // Import de la connexion à la base de données
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
+export async function GET(request) {
+  const token = request.cookies.get('token'); // Récupérer le token dans les cookies
+  if (!token) {
+    return new Response(JSON.stringify({ error: 'Token manquant' }), { status: 401 });
+  }
 
-export default function handler(req, res) {
-  if (req.method === 'GET') {
-    // Récupère le token JWT depuis les en-têtes
-    const token = req.headers.authorization?.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Décoder le token
+    console.log('Token décodé:', decoded); // Pour vérifier le contenu du token
 
-    if (!token) {
-      return res.status(401).json({ error: 'Token manquant ou invalide' });
+    // Récupérer les informations de l'utilisateur depuis le token
+    const user = {
+      prenom: decoded.prenom, // Récupérer le prénom depuis le token
+      username: decoded.username,
+      email: decoded.email
+    };
+
+    // Vérifie si les informations de l'utilisateur sont présentes
+    if (!user.prenom || !user.username || !user.email) {
+      return new Response(JSON.stringify({ error: 'Informations utilisateur manquantes dans le token' }), { status: 400 });
     }
 
-    try {
-      // Vérifie et décode le JWT
-      const decoded = jwt.verify(token, JWT_SECRET);
-      const userId = decoded.userId;
-
-      // Exécution de la requête SQL pour récupérer l'utilisateur
-      db.query(
-        'SELECT username, email FROM utilisateur WHERE id = ?',
-        [userId],
-        (err, results) => {
-          if (err) {
-            console.error('Erreur lors de la récupération des données utilisateur', err);
-            return res.status(500).json({ error: 'Erreur serveur' });
-          }
-
-          if (results.length === 0) {
-            return res.status(404).json({ error: 'Utilisateur non trouvé' });
-          }
-
-          // Renvoie les informations utilisateur
-          const utilisateur = results[0];
-          return res.status(200).json({
-            nom: utilisateur.username,
-            email: utilisateur.email,
-          });
-        }
-      );
-    } catch (error) {
-      return res.status(401).json({ error: 'Token invalide ou expiré' });
-    }
-  } else {
-    res.status(405).json({ error: 'Méthode non autorisée' });
+    return new Response(JSON.stringify(user), { status: 200 });
+  } catch (error) {
+    console.error('Erreur de décryptage du token:', error); // Log en cas d'erreur
+    return new Response(JSON.stringify({ error: 'Token invalide ou expiré' }), { status: 401 });
   }
 }
+
