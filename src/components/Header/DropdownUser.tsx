@@ -42,7 +42,7 @@ const DropdownUser = () => {
           <Image 
             width={48} 
             height={48} 
-            src="/images/user/userprofile.jpeg" 
+            src="/images/user/profile.png" 
             alt="Avatar utilisateur" 
             className="rounded-full" 
           /> 
