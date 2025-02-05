@@ -69,8 +69,10 @@ export default function Register() {
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import './style.css';
+
 export default function Register() {
   const [username, setUsername] = useState('');
+  const [prenom, setPrenom] = useState(''); // Nouveau champ pour prénom
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('user');
@@ -105,7 +107,7 @@ export default function Register() {
     const res = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, email, password,role }),
+      body: JSON.stringify({ username, prenom, email, password, role }), // Ajout du prénom ici
     });
 
     const data = await res.json();
@@ -122,6 +124,13 @@ export default function Register() {
     <div>
       <h1>Créer un compte</h1>
       <form onSubmit={handleRegister}>
+        <input
+          type="text"
+          placeholder="Prénom"
+          value={prenom}
+          onChange={(e) => setPrenom(e.target.value)} // Gère l'entrée du prénom
+          required
+        />
         <input
           type="text"
           placeholder="Nom d'utilisateur"
