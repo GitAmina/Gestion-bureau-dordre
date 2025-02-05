@@ -34,7 +34,7 @@ export default async function handler(
     const newReport = await prisma.rapport.create({
       data: {
         type: reportType,
-        dateGeneration: new Date(),
+        date_generation: new Date(),
         format,
         donnees: JSON.stringify(donnees), // Stocker les données sous forme JSON
       },

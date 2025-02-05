@@ -39,7 +39,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Statistiques",
-        route: "/",
+        route: "/dashboard",
       },
 
       {
