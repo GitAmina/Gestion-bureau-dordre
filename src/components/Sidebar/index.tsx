@@ -361,10 +361,10 @@ const menuGroups = [
             />
           </svg>
         ),
-        label: "Authentication",
-        route: "#",
+        label: "Deconnexion",
+        route: "/auth/deconnexion",
 
-        children: [{ label: "Sign In", route: "/auth/signin" }],
+        
       },
     ],
   },
