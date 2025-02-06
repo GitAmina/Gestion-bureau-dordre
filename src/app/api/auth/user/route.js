@@ -1,22 +1,4 @@
 
-// app/api/auth/user/route.js
-/*import jwt from 'jsonwebtoken';
-
-export async function GET(request) {
-  const token = request.cookies.get('token'); // Récupérer le token dans les cookies (ou localStorage côté client)
-  if (!token) {
-    return new Response(JSON.stringify({ error: 'Token manquant' }), { status: 401 });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Décoder le token
-    // Ici, tu peux récupérer l'utilisateur dans la base de données si nécessaire
-    const user = {prenom: decoded.prenom, username: decoded.username, email: decoded.email }; // Exemple d'utilisateur
-    return new Response(JSON.stringify(user), { status: 200 });
-  } catch (error) {
-    return new Response(JSON.stringify({ error: 'Token invalide ou expiré' }), { status: 401 });
-  }
-}*/
 import jwt from 'jsonwebtoken';
 
 export async function GET(request) {
