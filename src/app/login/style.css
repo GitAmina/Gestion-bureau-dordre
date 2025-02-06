@@ -1,115 +1,144 @@
-/* style.css */
+/* Styles généraux */
+body {
+  margin: 0;
+  font-family: "Open Sans", sans-serif;
+  background-color: #f0f4f8;
+}
 
-/* Reset styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+.login-page {
+  display: flex;
+  height: 100vh;
+}
 
-  body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f6f9;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-  }
+/* Section de gauche avec l'image */
+.left-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent; /* Pas de couleur de fond */
+}
 
-  /* Container for the login page */
-  .div1 {
-    background-color: #ffffff;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    width: 90%;
-  }
+.image-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  /* Heading styles */
-  h1 {
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
-    color: #2c3e50;
-    text-align: center;
-  }
+.login-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Pour s'assurer que l'image couvre bien l'espace */
+}
 
-  /* Input fields */
-  form input {
-    width: 100%;
-    padding: 0.8rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 1rem;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s ease-in-out;
-  }
+/* Section de droite (formulaire de connexion) */
+.right-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+}
 
-  form input:focus {
-    border-color: #2980b9;
-    outline: none;
-  }
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  text-align: center;
+}
 
-  /* Submit button */
-  form button[type="submit"] {
-    width: 100%;
-    padding: 0.8rem;
-    font-size: 1rem;
-    background-color: #2980b9;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
-  }
+.university-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
 
-  form button[type="submit"]:hover {
-    background-color: #1a5276;
-  }
+.university-logo .logo {
+  width: 80px; /* Taille réduite pour un logo circulaire */
+  height: 80px; /* Taille réduite pour un logo circulaire */
+  border-radius: 50%; /* Pour s'assurer que le logo reste circulaire */
+  object-fit: cover; /* Pour éviter la déformation */
+}
 
-  /* Secondary button for account creation */
-  button {
-    width: 100%;
-    padding: 0.8rem;
-    margin-top: 1rem;
-    font-size: 1rem;
-    background-color: #27ae60;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
-  }
+.login-title {
+  font-size: 2rem;
+  color: #1a73e8;
+  margin-bottom: 2rem;
+}
 
-  button:hover {
-    background-color: #1e8449;
-  }
+.input-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
 
-  /* Responsive design */
-  @media (max-width: 768px) {
-    div {
-      padding: 1.5rem;
-    }
+.input-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333333;
+  font-weight: 600;
+}
 
-    h1 {
-      font-size: 1.5rem;
-    }
+.input-container {
+  display: flex;
+  align-items: center;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  padding: 0.5rem;
+  background-color: #f9f9f9;
+}
 
-    form input,
-    form button[type="submit"],
-    button {
-      font-size: 0.9rem;
-    }
-  }
-  form select:focus {
-    border-color: #2980b9;
-    outline: none;
-  }
+.input-field {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 0.5rem;
+  font-size: 1rem;
+  background-color: transparent;
+}
 
-  /* Dropdown (select) styles */
-  form select {
-    cursor: pointer;
-  }
+.input-icon {
+  margin-left: 0.5rem;
+  color: #1a73e8;
+  cursor: pointer;
+}
+
+.password-toggle {
+  cursor: pointer;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #1a73e8;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-btn:hover {
+  background-color: #1557b0;
+}
+
+.forgot-password,
+.register-link {
+  text-align: center;
+  margin-top: 1rem;
+  color: #333333;
+}
+
+.forgot-password a,
+.register-link a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+.forgot-password a:hover,
+.register-link a:hover {
+  text-decoration: underline;
+}
