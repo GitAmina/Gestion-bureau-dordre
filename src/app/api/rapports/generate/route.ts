@@ -1,19 +1,23 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export async function POST(req: Request) {
   if (req.method !== "POST") {
-    return res.status(405).json({ message: "Méthode non autorisée" });
+    return NextResponse.json(
+      { message: "Méthode non autorisée" },
+      { status: 405 },
+    );
   }
 
   try {
+    const body = await req.json();
+    const { format, type } = body;
+    const reportType = type || "Mensuel"; // "Mensuel" par défaut
+
     // Récupérer les statistiques des courriers
     const totalCourriers = await prisma.courrier.count();
     const courriersEntrants = await prisma.courrier.count({
-      where: { type: "entrant" }, // Assure-toi que "type" est bien défini dans ton modèle
+      where: { type: "entrant" },
     });
     const courriersSortants = await prisma.courrier.count({
       where: { type: "sortant" },
@@ -26,10 +30,6 @@ export default async function handler(
       courriers_sortant: courriersSortants,
     };
 
-    // Déterminer le type de rapport
-    const { format, type } = req.body;
-    const reportType = type || "Mensuel"; // "Mensuel" par défaut
-
     // Insérer le rapport dans la base de données
     const newReport = await prisma.rapport.create({
       data: {
@@ -40,9 +40,9 @@ export default async function handler(
       },
     });
 
-    return res.status(201).json(newReport);
+    return NextResponse.json(newReport, { status: 201 });
   } catch (error) {
     console.error("Erreur lors de la génération du rapport :", error);
-    return res.status(500).json({ message: "Erreur serveur" });
+    return NextResponse.json({ message: "Erreur serveur" }, { status: 500 });
   }
 }
