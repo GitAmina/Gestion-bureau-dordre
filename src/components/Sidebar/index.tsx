@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -12,6 +12,7 @@ interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (arg: boolean) => void;
 }
+
 
 const menuGroups = [
   {
@@ -266,8 +267,38 @@ const menuGroups = [
 
         children: [{ label: "Settings", route: "/pages/settings" }],
       },
+      // Ajout conditionnel de l'item "Gestion des utilisateurs"
+      
+      
+{
+  icon: (
+    <svg
+      className="fill-current text-current"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 12C13.1046 12 14 12.8954 14 14C14 15.1046 13.1046 16 12 16C10.8954 16 10 15.1046 10 14C10 12.8954 10.8954 12 12 12Z"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <path
+        d="M8 21C8 19.8954 8.89543 19 10 19H14C15.1046 19 16 19.8954 16 21V22H8V21Z"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+    </svg>
+  ),
+  label: "Gestion des utilisateurs",
+  route: "/gestion-utilisateurs",
+  visible: true, // Cet item sera affiché seulement si l'utilisateur est administrateur
+  condition: (role: string) => role === "admin", // Condition d'affichage pour les administrateurs
+},
     ],
   },
+
   {
     name: "OTHERS",
     menuItems: [
@@ -358,14 +389,29 @@ const menuGroups = [
 
         
       },
-    ],
-  },
+
+],
+},
 ];
+
+   
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const pathname = usePathname();
-
   const [pageName, setPageName] = useLocalStorage("selectedMenu", "dashboard");
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  // Appel API pour récupérer le rôle de l'utilisateur
+  useEffect(() => {
+    fetch("/api/auth/role")
+      .then((response) => response.json())
+      .then((data) => {
+        setUserRole(data.role); // Supposons que la réponse contient un champ 'role'
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la récupération du rôle:", error);
+      });
+  }, []);
 
   return (
     <ClickOutside onClick={() => setSidebarOpen(false)}>
@@ -376,7 +422,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             : "-translate-x-full"
         }`}
       >
-        {/* <!-- SIDEBAR HEADER --> */}
+        {/* En-tête de la barre latérale */}
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 xl:py-10">
           <Link href="/">
             <div className="flex items-center">
@@ -388,7 +434,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 priority
                 style={{ width: "auto", height: "auto" }}
               />
-              <h1 className="mb-0.5 ml-3 bg-gradient-to-r from-purple-500  to-cyan-400 bg-clip-text text-heading-5 font-bold text-transparent dark:text-white">
+              <h1 className="mb-0.5 ml-3 bg-gradient-to-r from-purple-500 to-cyan-400 bg-clip-text text-heading-5 font-bold text-transparent dark:text-white">
                 Bureau d'Ordre
               </h1>
             </div>
@@ -413,10 +459,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             </svg>
           </button>
         </div>
-        {/* <!-- SIDEBAR HEADER --> */}
 
+        {/* Contenu de la barre latérale */}
         <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
-          {/* <!-- Sidebar Menu --> */}
           <nav className="mt-1 px-4 lg:px-6">
             {menuGroups.map((group, groupIndex) => (
               <div key={groupIndex}>
@@ -425,19 +470,25 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </h3>
 
                 <ul className="mb-6 flex flex-col gap-2">
-                  {group.menuItems.map((menuItem, menuIndex) => (
-                    <SidebarItem
-                      key={menuIndex}
-                      item={menuItem}
-                      pageName={pageName}
-                      setPageName={setPageName}
-                    />
-                  ))}
+                  {group.menuItems.map((menuItem, menuIndex) => {
+                    // Vérifier si l'élément doit être affiché en fonction du rôle
+                    if (menuItem.role && menuItem.role !== userRole) {
+                      return null; // Ne pas afficher l'élément si le rôle ne correspond pas
+                    }
+
+                    return (
+                      <SidebarItem
+                        key={menuIndex}
+                        item={menuItem}
+                        pageName={pageName}
+                        setPageName={setPageName}
+                      />
+                    );
+                  })}
                 </ul>
               </div>
             ))}
           </nav>
-          {/* <!-- Sidebar Menu --> */}
         </div>
       </aside>
     </ClickOutside>

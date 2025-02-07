@@ -56,7 +56,7 @@ export default function Login() {
       <div className="left-section">
         <div className="image-container">
           <img
-            src="/images/user/login1.jpg" // Utilisation de votre image
+            src="/images/user/7.png" // Utilisation de votre image
             alt="Gestion Bureau d'Ordre"
             className="login-image"
           />
