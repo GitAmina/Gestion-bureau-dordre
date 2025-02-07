@@ -15,11 +15,12 @@ export async function GET(request) {
     const user = {
       prenom: decoded.prenom, // Récupérer le prénom depuis le token
       username: decoded.username,
-      email: decoded.email
+      email: decoded.email,
+      role: decoded.role
     };
 
     // Vérifie si les informations de l'utilisateur sont présentes
-    if (!user.prenom || !user.username || !user.email) {
+    if (!user.prenom || !user.username || !user.email|| !user.role) {
       return new Response(JSON.stringify({ error: 'Informations utilisateur manquantes dans le token' }), { status: 400 });
     }
 
