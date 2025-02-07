@@ -7,6 +7,11 @@ import Image from "next/image";
 import SidebarItem from "@/components/Sidebar/SidebarItem";
 import ClickOutside from "@/components/ClickOutside";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { jwtDecode } from 'jwt-decode';
+import { useRouter } from  "next/navigation";
+
+
+
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -292,7 +297,7 @@ const menuGroups = [
     </svg>
   ),
   label: "Gestion des utilisateurs",
-  route: "/gestion-utilisateurs",
+  route: "/utilisateurs",
   visible: true, // Cet item sera affiché seulement si l'utilisateur est administrateur
   condition: (role: string) => role === "admin", // Condition d'affichage pour les administrateurs
 },
@@ -399,51 +404,58 @@ const menuGroups = [
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const pathname = usePathname();
   const [pageName, setPageName] = useLocalStorage("selectedMenu", "dashboard");
-  const [userRole, setUserRole] = useState<string | null>(null);
+  const [user, setUser] = useState<{ role?: string } | null>(null);
+  const router = useRouter();
 
-  // Appel API pour récupérer le rôle de l'utilisateur
   useEffect(() => {
-    fetch("/api/auth/role")
-      .then((response) => response.json())
-      .then((data) => {
-        setUserRole(data.role); // Supposons que la réponse contient un champ 'role'
-      })
-      .catch((error) => {
-        console.error("Erreur lors de la récupération du rôle:", error);
-      });
-  }, []);
+    if (typeof window === "undefined") return;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+      setUser({ role: decoded.role || "user" }); // "user" par défaut si le rôle n'existe pas
+    } catch (error) {
+      console.error("Token invalide", error);
+      localStorage.removeItem("token");
+      router.push("/login");
+    }
+  }, [router]);
+
+  if (!user) {
+    return <div>Chargement...</div>;
+  }
 
   return (
     <ClickOutside onClick={() => setSidebarOpen(false)}>
       <aside
-        className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden border-r border-stroke bg-white dark:border-stroke-dark dark:bg-gray-dark lg:static lg:translate-x-0 ${
-          sidebarOpen
-            ? "translate-x-0 duration-300 ease-linear"
-            : "-translate-x-full"
+        className={`absolute left-0 top-0 z-50 flex h-screen w-72 flex-col overflow-y-hidden border-r border-stroke bg-white dark:border-stroke-dark dark:bg-gray-dark lg:static lg:translate-x-0 ${
+          sidebarOpen ? "translate-x-0 duration-300 ease-linear" : "-translate-x-full"
         }`}
       >
         {/* En-tête de la barre latérale */}
-        <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 xl:py-10">
+        <div className="flex items-center justify-between px-6 py-5 lg:py-6">
           <Link href="/">
             <div className="flex items-center">
               <Image
                 width={50}
-                height={14}
+                height={50}
                 src="/images/logo/logo.png"
                 alt="Logo"
                 priority
-                style={{ width: "auto", height: "auto" }}
+                className="w-auto h-auto"
               />
-              <h1 className="mb-0.5 ml-3 bg-gradient-to-r from-purple-500 to-cyan-400 bg-clip-text text-heading-5 font-bold text-transparent dark:text-white">
+              <h1 className="ml-3 text-lg font-bold text-gray-900 dark:text-white">
                 Bureau d'Ordre
               </h1>
             </div>
           </Link>
 
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="block lg:hidden"
-          >
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="block lg:hidden">
             <svg
               className="fill-current"
               width="20"
@@ -472,8 +484,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <ul className="mb-6 flex flex-col gap-2">
                   {group.menuItems.map((menuItem, menuIndex) => {
                     // Vérifier si l'élément doit être affiché en fonction du rôle
-                    if (menuItem.role && menuItem.role !== userRole) {
-                      return null; // Ne pas afficher l'élément si le rôle ne correspond pas
+                    if (menuItem.condition && !menuItem.condition(user.role || "user")) {
+                      return null; // Ne pas afficher l'élément si la condition n'est pas remplie
                     }
 
                     return (
