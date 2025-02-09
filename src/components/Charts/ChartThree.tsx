@@ -136,9 +136,12 @@
 
 // ------------------recuperer les donnees de la base de donnees-------------------------
 
+"use client";
+
 import { ApexOptions } from "apexcharts";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactApexChart from "react-apexcharts";
+import html2canvas from "html2canvas";
 import DefaultSelectOption from "@/components/SelectOption/DefaultSelectOption";
 
 const ChartThree: React.FC = () => {
@@ -146,6 +149,8 @@ const ChartThree: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<string>("Annuel");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const chartRef = useRef<HTMLDivElement>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   // Mois et année actuels
   const currentDate = new Date();
@@ -181,6 +186,28 @@ const ChartThree: React.FC = () => {
       setLoading(false);
     }
   };
+
+  // generer automatiquement l'image du graphe.
+
+  useEffect(() => {
+    if (chartRef.current) {
+      setTimeout(() => {
+        html2canvas(chartRef.current as HTMLElement).then((canvas) => {
+          const imgData = canvas.toDataURL("image/png");
+          setImageUrl(imgData);
+
+          // Enregistrer l'image localement ou l'envoyer à une API
+          fetch("/api/save-chart", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ image: imgData }),
+          });
+        });
+      }, 1000); // Attendre que le graphique soit bien rendu
+    }
+  }, []);
 
   // Mise à jour automatique toutes les 30 secondes
   useEffect(() => {

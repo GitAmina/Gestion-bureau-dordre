@@ -36,17 +36,31 @@ const RapportsTable = () => {
   };
 
   //telechager un rapport
-  const downloadReport = async (format: string) => {
-    const response = await fetch(`/api/rapports/telecharger?format=${format}`);
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
+  const downloadReport = async (id: number, format: string) => {
+    try {
+      const response = await fetch(
+        `/api/rapports/telecharger?id=${id}&format=${format.toLowerCase()}`,
+      );
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = format === "pdf" ? "rapport.pdf" : "rapport.xlsx";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+      if (!response.ok) {
+        console.error("Erreur lors du téléchargement :", await response.text());
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `rapport_statistiques_${id}.${format.toLowerCase() === "excel" ? "xlsx" : format.toLowerCase()}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Erreur :", error);
+    }
   };
 
   //generer un rapport
@@ -247,7 +261,7 @@ const RapportsTable = () => {
                       </button>
                       <button
                         className="hover:text-primary"
-                        onClick={() => downloadReport(report.format)}
+                        onClick={() => downloadReport(report.id, report.format)}
                       >
                         <svg
                           className="fill-current"

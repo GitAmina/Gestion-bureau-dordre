@@ -46,3 +46,40 @@ export async function DELETE(
     );
   }
 }
+
+//===============recuperer le rapport==================
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const id = Number(params.id); // Convertit l'ID en number
+
+  if (isNaN(id)) {
+    return NextResponse.json(
+      { message: "ID de rapport invalide" },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const rapport = await prisma.rapport.findUnique({
+      where: { id },
+    });
+
+    if (!rapport) {
+      return NextResponse.json(
+        { message: "Rapport non trouvé" },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json(rapport, { status: 200 });
+  } catch (error) {
+    console.error("Erreur lors de la récupération du rapport :", error);
+    return NextResponse.json(
+      { message: "Erreur interne du serveur" },
+      { status: 500 },
+    );
+  }
+}

@@ -22,12 +22,14 @@ export async function POST(req: Request) {
     const courriersSortants = await prisma.courrier.count({
       where: { type: "sortant" },
     });
+    const totalUtilisateurs = await prisma.utilisateur.count();
 
     // Construire les données du rapport
     const donnees = {
       total_courriers: totalCourriers,
       courriers_entrant: courriersEntrants,
       courriers_sortant: courriersSortants,
+      total_utilisateurs: totalUtilisateurs,
     };
 
     // Insérer le rapport dans la base de données

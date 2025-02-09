@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rapport d'Activité</title>
+  <style>
+      body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          color: #333;
+          line-height: 1.6;
+      }
+
+      .container {
+          width: 800px;
+          margin: 0 auto;
+          padding: 30px;
+          background: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .cover-page {
+          text-align: center;
+          padding: 50px 20px;
+          background: #f4f4f4;
+          margin-bottom: 30px;
+      }
+
+      .cover-page h1 {
+          font-size: 36px;
+          font-weight: bold;
+          color: #c9302c;
+      }
+
+      .cover-page p {
+          font-size: 18px;
+          margin-top: 10px;
+      }
+
+      h2 {
+          border-bottom: 2px solid #c9302c;
+          padding-bottom: 5px;
+          color: #c9302c;
+          margin-top: 40px;
+      }
+
+      .summary {
+          background: #f9f9f9;
+          padding: 15px;
+          border-left: 5px solid #c9302c;
+          margin-bottom: 30px;
+      }
+
+      table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 20px;
+      }
+
+      th, td {
+          border: 1px solid #ddd;
+          padding: 12px;
+          text-align: center;
+      }
+
+      th {
+          background: #c9302c;
+          color: white;
+      }
+
+      .footer {
+          margin-top: 40px;
+          text-align: center;
+          font-size: 14px;
+          color: #666;
+      }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Page de couverture -->
+  <div class="cover-page">
+    <h1>Rapport d'Activité</h1>
+    <p>Période : <strong>{{periode}}</strong></p>
+    <p>Date de génération : <strong>{{dateGeneration}}</strong></p>
+  </div>
+
+  <!-- Résumé -->
+  <h2>Résumé</h2>
+  <div class="summary">
+    <p>Ce rapport présente les statistiques générales des courriers, des utilisateurs et des départements pour la période <strong>{{periode}}</strong>. Il fournit une analyse détaillée de l'évolution des échanges administratifs.</p>
+  </div>
+
+  <!-- Statistiques Générales -->
+  <h2>Statistiques Générales</h2>
+  <table>
+    <thead>
+    <tr>
+      <th>Total Courriers</th>
+      <th>Total Utilisateurs</th>
+      <th>Total Départements</th>
+      <th>Total Archives</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>{{totalCourriers}}</td>
+      <td>{{totalUtilisateurs}}</td>
+      <td>{{totalDepartements}}</td>
+      <td>{{totalArchives}}</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- Détails des Courriers -->
+  <h2>Détails des Courriers</h2>
+  <table>
+    <thead>
+    <tr>
+      <th>Entrants</th>
+      <th>Sortants</th>
+      <th>En attente</th>
+      <th>Trait&eacute;s</th>
+      <th>Cl&ocirc;tur&eacute;s</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>{{courriersEntrant}}</td>
+      <td>{{courriersSortant}}</td>
+      <td>{{courriersEnAttente}}</td>
+      <td>{{courriersTraite}}</td>
+      <td>{{courriersCloture}}</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- Pied de page -->
+  <div class="footer">
+    <p>Rapport généré automatiquement. © 2025 Bureau d'ordre.</p>
+  </div>
+</div>
+
+</body>
+</html>
