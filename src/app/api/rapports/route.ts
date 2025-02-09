@@ -2,26 +2,16 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 //====================recuperer la liste des rapports de la base de donnees===================
 
-import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma"; // Assure-toi d'importer Prisma correctement
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export async function GET() {
   try {
-    if (req.method !== "GET") {
-      return res.status(405).json({ error: "Méthode non autorisée" });
-    }
-
-    // Récupérer tous les rapports de la base de données
-    const rapports = await prisma.rapport.findMany({
-      orderBy: { date_generation: "desc" }, // Trier par date de génération (du plus récent au plus ancien)
-    });
-
-    res.status(200).json(rapports);
+    const rapports = await prisma.rapport.findMany();
+    return NextResponse.json(rapports, { status: 200 });
   } catch (error) {
     console.error("Erreur lors de la récupération des rapports :", error);
-    res.status(500).json({ error: "Erreur serveur" });
+    return NextResponse.json({ message: "Erreur serveur" }, { status: 500 });
   }
 }
 
