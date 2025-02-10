@@ -8,7 +8,7 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 type Report = {
   id: string;
   type: string;
-  dateGeneration: string;
+  date_generation: string;
   format: string;
 };
 
@@ -117,7 +117,7 @@ const RapportsTable = () => {
                     {report.type}
                   </td>
                   <td className="border-b px-4 py-4 dark:border-dark-3">
-                    {new Date(report.dateGeneration).toLocaleDateString()}
+                    {new Date(report.date_generation).toLocaleDateString()}
                   </td>
                   <td className="border-b px-4 py-4 dark:border-dark-3">
                     <span
