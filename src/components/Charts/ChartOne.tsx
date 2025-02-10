@@ -145,7 +145,7 @@ import DefaultSelectOption from "@/components/SelectOption/DefaultSelectOption";
 import axios from "axios";
 
 const ChartCourriers: React.FC = () => {
-  const [timeFrame, setTimeFrame] = useState("monthly");
+  const [timeFrame, setTimeFrame] = useState("Mensuel");
   const [series, setSeries] = useState([
     { name: "Courriers Entrants", data: [] },
     { name: "Courriers Sortants", data: [] },

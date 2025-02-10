@@ -74,7 +74,6 @@ const DefaultSelectOption = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOptionSelect = (option: string) => {
-    console.log("🔄 Option sélectionnée :", option); // Ajoute un log ici
     setSelectedOption(option);
     setIsOpen(false);
     if (onChange) {
@@ -84,9 +83,9 @@ const DefaultSelectOption = ({
 
   return (
     <ClickOutside onClick={() => setIsOpen(false)}>
-      <div className="relative z-20 inline-flex cursor-pointer appearance-none rounded-[5px] border border-stroke bg-white text-sm font-medium outline-none dark:border-dark-3 dark:bg-dark-2">
+      <div className="relative z-20 inline-flex cursor-pointer appearance-none rounded-md border border-stroke bg-white px-4 py-2 font-medium outline-none dark:border-dark-3 dark:bg-dark-2">
         <div
-          className={`py-[5px] pl-[9px] pr-[35px] text-sm font-medium text-dark dark:text-white ${isOpen ? "open" : ""}`}
+          className={`py-[5px] pl-[9px] pr-[35px] font-medium text-dark dark:text-white ${isOpen ? "open" : ""}`}
           onClick={() => setIsOpen(!isOpen)}
         >
           {selectedOption}
