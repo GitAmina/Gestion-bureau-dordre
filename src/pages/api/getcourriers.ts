@@ -66,17 +66,17 @@ export default async function handler(
 
     if (timeFrame) {
       // --- 📊 Gestion des statistiques mensuelles et annuelles ---
-      if (timeFrame === "monthly") {
+      if (timeFrame === "Mensuel") {
         const year = new Date().getFullYear();
         startDate = new Date(year, 0, 1); // 1er Janvier
         endDate = new Date(year, 11, 31, 23, 59, 59, 999); // 31 Décembre
-      } else if (timeFrame === "yearly") {
+      } else if (timeFrame === "annuel") {
         startDate = new Date(2000, 0, 1); // Année minimale
         endDate = new Date(); // Aujourd'hui
       } else {
         return res
           .status(400)
-          .json({ error: "timeFrame invalide (monthly ou yearly requis)" });
+          .json({ error: "timeFrame invalide (Mensuel ou annuel requis)" });
       }
 
       const courriers = await prisma.courrier.findMany({
@@ -97,7 +97,7 @@ export default async function handler(
       let entrants: Record<string, number> = {};
       let sortants: Record<string, number> = {};
 
-      if (timeFrame === "monthly") {
+      if (timeFrame === "Mensuel") {
         categories = [
           "Jan",
           "Fév",
@@ -112,7 +112,7 @@ export default async function handler(
           "Nov",
           "Déc",
         ];
-      } else if (timeFrame === "yearly") {
+      } else if (timeFrame === "annuel") {
         const years = new Set();
         courriers.forEach(({ date_reception, date_envoi }) => {
           const date = date_reception || date_envoi;
@@ -132,9 +132,9 @@ export default async function handler(
         date = new Date(date);
 
         let key;
-        if (timeFrame === "monthly") {
+        if (timeFrame === "Mensuel") {
           key = categories[date.getMonth()];
-        } else if (timeFrame === "yearly") {
+        } else if (timeFrame === "annuel") {
           key = date.getFullYear().toString();
         }
 
