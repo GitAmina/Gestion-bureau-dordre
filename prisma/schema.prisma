@@ -27,7 +27,7 @@ datasource db {
 //   fichierNumerise String?
 //   departement     Departement? @relation(fields: [departementId], references: [id])
 //   departementId   Int?
-//
+//   archived Boolean @default(false)
 //   archives Archive[]
 // }
 //
