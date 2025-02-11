@@ -5,6 +5,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Link from "next/link";
+import axios from "axios";
 
 // Définition du type de courrier avec des informations supplémentaires
 interface Departement {
@@ -25,6 +26,7 @@ interface Courrier {
   contenu?: string; // Contenu du courrier
   departement?: Departement; // Département en tant qu'objet
   fichier_numerise?: string; // Nom du fichier numérisé
+  archived?: boolean;
 }
 
 export default function Courriers() {
@@ -53,6 +55,33 @@ export default function Courriers() {
         );
       });
   }, []);
+
+  // Fonction pour archiver un courrier
+  const handleArchive = async (courrier: Courrier) => {
+    try {
+      if (courrier.archived) {
+        // Désarchiver
+        await axios.delete(`/api/archive?courrierId=${courrier.id}`);
+        toast.success("Courrier désarchivé avec succès !");
+      } else {
+        // Archiver
+        await axios.post("/api/archive", { courrierId: courrier.id });
+        toast.success("Courrier archivé avec succès !");
+      }
+  
+      // Mettre à jour l'état local pour refléter les changements
+      setCourriers((prevCourriers) =>
+        prevCourriers.map((c) =>
+          c.id === courrier.id ? { ...c, archived: !courrier.archived } : c
+        )
+      );
+    } catch (error) {
+      console.error("Erreur lors de la modification de l'archivage :", error);
+      toast.error("Impossible de modifier l'archivage du courrier.");
+    }
+  };
+  
+  
 
   // Fonction pour gérer le clic sur l'icône d'information
   const handleViewDetails = (courrier: Courrier) => {
@@ -142,6 +171,8 @@ export default function Courriers() {
         : [...prevFavorites, courrierId],
     );
   };
+
+  
 
   return (
     <DefaultLayout>
@@ -303,9 +334,12 @@ export default function Courriers() {
                       </button>
 
                       <button
-                        className="hover:text-green-500"
-                        onClick={() => handleFavoriteToggle(courrier.id)}
-                      >
+  onClick={() => handleArchive(courrier)}
+  className={`p-2 rounded-full ${
+    courrier.archived ? "bg-green-500 text-white" : "bg--200"
+  }`}
+  title={courrier.archived ? "Désarchiver" : "Archiver"}
+>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="24"

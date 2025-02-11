@@ -6,6 +6,7 @@ export type Package = {
 };
 
 export type Package1 = {
+  id: number;
   reference: string;
   type: string;
   expediteur: string;
@@ -14,4 +15,5 @@ export type Package1 = {
   etat: string;
   datereception: string;
   dateenvoie: string;
+  archive: boolean;
 };
