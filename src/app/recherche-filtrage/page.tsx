@@ -255,6 +255,50 @@ const RechercheFiltragePage = () => {
             )}
           </div>
 
+          {/* Bouton de pagination */}
+      <div className="mt-4 flex items-center justify-between">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className={`rounded px-4 py-2 ${currentPage === 1 ? "bg-gray-300" : "bg-indigo-500 text-white hover:bg-indigo-500"}`}
+        >
+          Précédent
+        </button>
+
+        <span>
+          Page {currentPage} /{" "}
+          {Math.max(1, Math.ceil(filteredCourriers.length / itemsPerPage))}
+        </span>
+
+        <span className="ml-4">
+          Affichés{" "}
+          {Math.min(currentPage * itemsPerPage, filteredCourriers.length)} /{" "}
+          {filteredCourriers.length}
+        </span>
+
+        <button
+  onClick={() =>
+    setCurrentPage((prev) =>
+      Math.min(prev + 1, Math.ceil(filteredCourriers.length / itemsPerPage))
+    )
+  }
+  disabled={
+    filteredCourriers.length === 0 || // Si aucun courrier, désactiver le bouton
+    currentPage >= Math.ceil(filteredCourriers.length / itemsPerPage) // Si dernière page, désactiver
+  }
+  className={`rounded px-4 py-2 ${
+    filteredCourriers.length === 0 || 
+    currentPage >= Math.ceil(filteredCourriers.length / itemsPerPage) 
+      ? "bg-gray-300 cursor-not-allowed" 
+      : "bg-indigo-500 text-white hover:bg-indigo-500"
+  }`}
+>
+  Suivant
+</button>
+
+      </div>
+
+
           {/* Affichage des détails du courrier sélectionné */}
           {selectedCourrier && (
             <div className="mt-5 rounded-lg border border-stroke bg-white p-5 shadow">
