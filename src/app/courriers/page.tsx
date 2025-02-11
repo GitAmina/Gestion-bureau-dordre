@@ -5,11 +5,8 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Link from "next/link";
-<<<<<<< HEAD
 import axios from "axios";
-=======
 import Swal from "sweetalert2";
->>>>>>> 3423c622352836b73d0a0fdb0da8526e6abaf7d1
 
 // Définition du type de courrier avec des informations supplémentaires
 interface Departement {
@@ -188,9 +185,7 @@ export default function Courriers() {
     );
   };
 
-<<<<<<< HEAD
   
-=======
   // Pour telecharger un courrier
   const downloadCourrier = async (id: number) => {
     try {
@@ -222,7 +217,6 @@ export default function Courriers() {
       console.error("Erreur :", error);
     }
   };
->>>>>>> 3423c622352836b73d0a0fdb0da8526e6abaf7d1
 
   return (
     <DefaultLayout>
