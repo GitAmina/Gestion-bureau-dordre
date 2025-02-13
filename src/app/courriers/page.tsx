@@ -5,6 +5,8 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Link from "next/link";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 // Définition du type de courrier avec des informations supplémentaires
 interface Departement {
@@ -25,6 +27,7 @@ interface Courrier {
   contenu?: string; // Contenu du courrier
   departement?: Departement; // Département en tant qu'objet
   fichier_numerise?: string; // Nom du fichier numérisé
+  archived?: boolean;
 }
 
 export default function Courriers() {
@@ -54,6 +57,33 @@ export default function Courriers() {
       });
   }, []);
 
+  // Fonction pour archiver un courrier
+  const handleArchive = async (courrier: Courrier) => {
+    try {
+      if (courrier.archived) {
+        // Désarchiver
+        await axios.delete(`/api/archive?courrierId=${courrier.id}`);
+        toast.success("Courrier désarchivé avec succès !");
+      } else {
+        // Archiver
+        await axios.post("/api/archive", { courrierId: courrier.id });
+        toast.success("Courrier archivé avec succès !");
+      }
+  
+      // Mettre à jour l'état local pour refléter les changements
+      setCourriers((prevCourriers) =>
+        prevCourriers.map((c) =>
+          c.id === courrier.id ? { ...c, archived: !courrier.archived } : c
+        )
+      );
+    } catch (error) {
+      console.error("Erreur lors de la modification de l'archivage :", error);
+      toast.error("Impossible de modifier l'archivage du courrier.");
+    }
+  };
+  
+  
+
   // Fonction pour gérer le clic sur l'icône d'information
   const handleViewDetails = (courrier: Courrier) => {
     setSelectedCourrier(courrier);
@@ -67,11 +97,19 @@ export default function Courriers() {
 
   // Fonction pour gérer la suppression d'un courrier
   const handleDelete = async (courrierId: number) => {
-    const isConfirmed = window.confirm(
-      "Voulez-vous vraiment supprimer ce courrier ?",
-    );
+    const result = await Swal.fire({
+      title: "Êtes-vous sûr ?",
+      text: "Cette action est irréversible !",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Oui, supprimer !",
+      cancelButtonText: "Annuler",
+    });
 
-    if (!isConfirmed) return;
+    // Vérifier si l'utilisateur a confirmé la suppression
+    if (!result.isConfirmed) return;
 
     try {
       const response = await fetch(`/api/courriers/${courrierId}`, {
@@ -83,13 +121,17 @@ export default function Courriers() {
 
       if (response.ok) {
         setCourriers(courriers.filter((c) => c.id !== courrierId));
-        toast.success("Le courrier a été supprimé avec succès !");
+        Swal.fire("Supprimé !", "Le courrier a été supprimé.", "success");
       } else {
-        toast.error(`Erreur : ${data.message}`);
+        Swal.fire(
+          "Erreur",
+          `Impossible de supprimer : ${data.message}`,
+          "error",
+        );
       }
     } catch (error) {
       console.error("Erreur de suppression :", error);
-      toast.error("Impossible de supprimer le courrier.");
+      Swal.fire("Erreur", "Une erreur s'est produite.", "error");
     }
   };
 
@@ -141,6 +183,39 @@ export default function Courriers() {
         ? prevFavorites.filter((id) => id !== courrierId)
         : [...prevFavorites, courrierId],
     );
+  };
+
+  
+  // Pour telecharger un courrier
+  const downloadCourrier = async (id: number) => {
+    try {
+      const response = await fetch(`/api/courriers/telecharger?id=${id}`);
+
+      if (!response.ok) {
+        console.error("Erreur lors du téléchargement :", await response.text());
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+
+      // Récupérer le nom du fichier depuis l'en-tête de la réponse
+      const fileName =
+        response.headers.get("Content-Disposition")?.split("filename=")[1] ||
+        "courrier.pdf";
+
+      a.download = fileName.replace(/"/g, ""); // Nettoyer les guillemets
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Erreur :", error);
+    }
   };
 
   return (
@@ -303,9 +378,12 @@ export default function Courriers() {
                       </button>
 
                       <button
-                        className="hover:text-green-500"
-                        onClick={() => handleFavoriteToggle(courrier.id)}
-                      >
+  onClick={() => handleArchive(courrier)}
+  className={`p-2 rounded-full ${
+    courrier.archived ? "bg-green-500 text-white" : "bg--200"
+  }`}
+  title={courrier.archived ? "Désarchiver" : "Archiver"}
+>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="24"
@@ -327,7 +405,10 @@ export default function Courriers() {
                         </svg>
                       </button>
 
-                      <button className="hover:text-primary">
+                      <button
+                        className="hover:text-primary"
+                        onClick={() => downloadCourrier(courrier.id)}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="24"
