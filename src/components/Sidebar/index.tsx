@@ -7,17 +7,13 @@ import Image from "next/image";
 import SidebarItem from "@/components/Sidebar/SidebarItem";
 import ClickOutside from "@/components/ClickOutside";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { jwtDecode } from 'jwt-decode';
-import { useRouter } from  "next/navigation";
-
-
-
+import { jwtDecode } from "jwt-decode";
+import { useRouter } from "next/navigation";
 
 interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (arg: boolean) => void;
 }
-
 
 const menuGroups = [
   {
@@ -131,8 +127,7 @@ const menuGroups = [
         label: "Recherche/Filtrage",
         route: "/recherche-filtrage",
       },
-      
-      
+
       {
         icon: (
           <svg
@@ -334,34 +329,33 @@ const menuGroups = [
         children: [{ label: "Settings", route: "/pages/settings" }],
       },
       // Ajout conditionnel de l'item "Gestion des utilisateurs"
-      
-      
-{
-  icon: (
-    <svg
-      className="fill-current text-current"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M12 12C13.1046 12 14 12.8954 14 14C14 15.1046 13.1046 16 12 16C10.8954 16 10 15.1046 10 14C10 12.8954 10.8954 12 12 12Z"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      <path
-        d="M8 21C8 19.8954 8.89543 19 10 19H14C15.1046 19 16 19.8954 16 21V22H8V21Z"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-    </svg>
-  ),
-  label: "Gestion des utilisateurs",
-  route: "/utilisateurs",
-  visible: true, // Cet item sera affiché seulement si l'utilisateur est administrateur
-  condition: (role: string) => role === "admin", // Condition d'affichage pour les administrateurs
-},
+
+      {
+        icon: (
+          <svg
+            className="fill-current text-current"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 12C13.1046 12 14 12.8954 14 14C14 15.1046 13.1046 16 12 16C10.8954 16 10 15.1046 10 14C10 12.8954 10.8954 12 12 12Z"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+            <path
+              d="M8 21C8 19.8954 8.89543 19 10 19H14C15.1046 19 16 19.8954 16 21V22H8V21Z"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+          </svg>
+        ),
+        label: "Gestion des utilisateurs",
+        route: "/utilisateurs",
+        visible: true, // Cet item sera affiché seulement si l'utilisateur est administrateur
+        condition: (role: string) => role === "admin", // Condition d'affichage pour les administrateurs
+      },
     ],
   },
 
@@ -448,19 +442,15 @@ const menuGroups = [
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-<path d="M8.5 0C7.678 0 7 .678 7 1.5v6c0 .665 1 .67 1 0v-6c0-.286.214-.5.5-.5h20c.286 0 .5.214.5.5v27c0 .286-.214.5-.5.5h-20c-.286 0-.5-.214-.5-.5v-7c0-.66-1-.654-1 0v7c0 .822.678 1.5 1.5 1.5h20c.822 0 1.5-.678 1.5-1.5v-27c0-.822-.678-1.5-1.5-1.5zm-4 19c.45 0 .643-.563.354-.854L1.207 14.5l3.647-3.646c.442-.426-.254-1.16-.708-.708l-4 4c-.195.196-.195.512 0 .708l4 4c.095.097.22.146.354.146zm13-4h-14c-.277 0-.5-.223-.5-.5s.223-.5.5-.5h14c.277 0 .5.223.5.5s-.223.5-.5.5z"/>          </svg>
+            <path d="M8.5 0C7.678 0 7 .678 7 1.5v6c0 .665 1 .67 1 0v-6c0-.286.214-.5.5-.5h20c.286 0 .5.214.5.5v27c0 .286-.214.5-.5.5h-20c-.286 0-.5-.214-.5-.5v-7c0-.66-1-.654-1 0v7c0 .822.678 1.5 1.5 1.5h20c.822 0 1.5-.678 1.5-1.5v-27c0-.822-.678-1.5-1.5-1.5zm-4 19c.45 0 .643-.563.354-.854L1.207 14.5l3.647-3.646c.442-.426-.254-1.16-.708-.708l-4 4c-.195.196-.195.512 0 .708l4 4c.095.097.22.146.354.146zm13-4h-14c-.277 0-.5-.223-.5-.5s.223-.5.5-.5h14c.277 0 .5.223.5.5s-.223.5-.5.5z" />{" "}
+          </svg>
         ),
         label: "Deconnexion",
         route: "/auth/deconnexion",
-
-        
       },
-
-],
-},
+    ],
+  },
 ];
-
-   
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const pathname = usePathname();
@@ -495,7 +485,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     <ClickOutside onClick={() => setSidebarOpen(false)}>
       <aside
         className={`absolute left-0 top-0 z-50 flex h-screen w-72 flex-col overflow-y-hidden border-r border-stroke bg-white dark:border-stroke-dark dark:bg-gray-dark lg:static lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0 duration-300 ease-linear" : "-translate-x-full"
+          sidebarOpen
+            ? "translate-x-0 duration-300 ease-linear"
+            : "-translate-x-full"
         }`}
       >
         {/* En-tête de la barre latérale */}
@@ -508,15 +500,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 src="/images/logo/logo.png"
                 alt="Logo"
                 priority
-                className="w-auto h-auto"
+                className="h-auto w-auto"
               />
-              <h1 className="ml-3 text-lg font-bold text-gray-900 dark:text-white">
-                Bureau d'Ordre
+              <h1 className=" via-puprle-600 ml-3 bg-gradient-to-r from-purple-400  to-blue-500 bg-clip-text text-3xl font-bold text-transparent dark:text-white">
+                OrdoDesk
               </h1>
             </div>
           </Link>
 
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="block lg:hidden">
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="block lg:hidden"
+          >
             <svg
               className="fill-current"
               width="20"
@@ -545,7 +540,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <ul className="mb-6 flex flex-col gap-2">
                   {group.menuItems.map((menuItem, menuIndex) => {
                     // Vérifier si l'élément doit être affiché en fonction du rôle
-                    if (menuItem.condition && !menuItem.condition(user.role || "user")) {
+                    if (
+                      menuItem.condition &&
+                      !menuItem.condition(user.role || "user")
+                    ) {
                       return null; // Ne pas afficher l'élément si la condition n'est pas remplie
                     }
 

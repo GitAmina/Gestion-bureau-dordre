@@ -13,70 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// model Courrier {
-//   id              Int          @id @default(autoincrement())
-//   reference       String       @unique
-//   type            String // ENUM('entrant', 'sortant')
-//   expediteur      String
-//   destinataire    String
-//   sujet           String?
-//   contenu         String?
-//   etat            String       @default("En attente") // ENUM('En attente', 'Traité', 'Clôturé')
-//   dateReception   DateTime?
-//   dateEnvoi       DateTime?
-//   fichierNumerise String?
-//   departement     Departement? @relation(fields: [departementId], references: [id])
-//   departementId   Int?
-//   archived Boolean @default(false)
-//   archives Archive[]
-// }
-//
-// model Utilisateur {
-//   id           Int          @id @default(autoincrement())
-//   username     String
-//   password     String
-//   email        String       @unique
-//   role         String
-//   dateCreation DateTime     @default(now())
-//   dateUpdate   DateTime     @updatedAt
-//   creePar      Utilisateur? @relation("CreePar", fields: [creeParId], references: [id])
-//   creeParId    Int?
-//   updatePar    Utilisateur? @relation("UpdatePar", fields: [updateParId], references: [id])
-//   updateParId  Int?
-//
-//   utilisateursCree   Utilisateur[] @relation("CreePar")
-//   utilisateursUpdate Utilisateur[] @relation("UpdatePar")
-//   departements       Departement[] @relation("Responsable")
-// }
-//
-// model Departement {
-//   id            Int          @id @default(autoincrement())
-//   nom           String
-//   description   String?
-//   responsable   Utilisateur? @relation("Responsable", fields: [responsableId], references: [id])
-//   responsableId Int?
-//
-//   courriers Courrier[]
-// }
-//
-// model Archive {
-//   id              Int      @id @default(autoincrement())
-//   courrierId      Int
-//   fichierNumerise String
-//   categorie       String?
-//   dateArchivage   DateTime @default(now())
-//
-//   courrier Courrier @relation(fields: [courrierId], references: [id], onDelete: Cascade)
-// }
-//
-// model Rapport {
-//   id             Int      @id @default(autoincrement())
-//   type           String // ENUM('Mensuel', 'Annuel')
-//   dateGeneration DateTime @default(now())
-//   donnees        Json
-//   format         String // ENUM('PDF', 'Excel')
-// }
-
 model Courrier {
   id               Int          @id @default(autoincrement())
   reference        String       @unique
@@ -98,6 +34,7 @@ model Courrier {
 model Utilisateur {
   id            Int          @id @default(autoincrement())
   username      String
+  prenom        String       @default("Inconnu")
   password      String
   email         String       @unique
   role          String
