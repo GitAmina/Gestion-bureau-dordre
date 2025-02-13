@@ -1,12 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import SidebarItem from "@/components/Sidebar/SidebarItem";
 import ClickOutside from "@/components/ClickOutside";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { jwtDecode } from "jwt-decode";
+import { useRouter } from "next/navigation";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -266,8 +268,37 @@ const menuGroups = [
 
         children: [{ label: "Settings", route: "/pages/settings" }],
       },
+      // Ajout conditionnel de l'item "Gestion des utilisateurs"
+
+      {
+        icon: (
+          <svg
+            className="fill-current text-current"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 12C13.1046 12 14 12.8954 14 14C14 15.1046 13.1046 16 12 16C10.8954 16 10 15.1046 10 14C10 12.8954 10.8954 12 12 12Z"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+            <path
+              d="M8 21C8 19.8954 8.89543 19 10 19H14C15.1046 19 16 19.8954 16 21V22H8V21Z"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+          </svg>
+        ),
+        label: "Gestion des utilisateurs",
+        route: "/utilisateurs",
+        visible: true, // Cet item sera affiché seulement si l'utilisateur est administrateur
+        condition: (role: string) => role === "admin", // Condition d'affichage pour les administrateurs
+      },
     ],
   },
+
   {
     name: "OTHERS",
     menuItems: [
@@ -351,12 +382,11 @@ const menuGroups = [
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-<path d="M8.5 0C7.678 0 7 .678 7 1.5v6c0 .665 1 .67 1 0v-6c0-.286.214-.5.5-.5h20c.286 0 .5.214.5.5v27c0 .286-.214.5-.5.5h-20c-.286 0-.5-.214-.5-.5v-7c0-.66-1-.654-1 0v7c0 .822.678 1.5 1.5 1.5h20c.822 0 1.5-.678 1.5-1.5v-27c0-.822-.678-1.5-1.5-1.5zm-4 19c.45 0 .643-.563.354-.854L1.207 14.5l3.647-3.646c.442-.426-.254-1.16-.708-.708l-4 4c-.195.196-.195.512 0 .708l4 4c.095.097.22.146.354.146zm13-4h-14c-.277 0-.5-.223-.5-.5s.223-.5.5-.5h14c.277 0 .5.223.5.5s-.223.5-.5.5z"/>          </svg>
+            <path d="M8.5 0C7.678 0 7 .678 7 1.5v6c0 .665 1 .67 1 0v-6c0-.286.214-.5.5-.5h20c.286 0 .5.214.5.5v27c0 .286-.214.5-.5.5h-20c-.286 0-.5-.214-.5-.5v-7c0-.66-1-.654-1 0v7c0 .822.678 1.5 1.5 1.5h20c.822 0 1.5-.678 1.5-1.5v-27c0-.822-.678-1.5-1.5-1.5zm-4 19c.45 0 .643-.563.354-.854L1.207 14.5l3.647-3.646c.442-.426-.254-1.16-.708-.708l-4 4c-.195.196-.195.512 0 .708l4 4c.095.097.22.146.354.146zm13-4h-14c-.277 0-.5-.223-.5-.5s.223-.5.5-.5h14c.277 0 .5.223.5.5s-.223.5-.5.5z" />{" "}
+          </svg>
         ),
         label: "Deconnexion",
         route: "/auth/deconnexion",
-
-        
       },
     ],
   },
@@ -364,32 +394,56 @@ const menuGroups = [
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const pathname = usePathname();
-
   const [pageName, setPageName] = useLocalStorage("selectedMenu", "dashboard");
+  const [user, setUser] = useState<{ role?: string } | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+      setUser({ role: decoded.role || "user" }); // "user" par défaut si le rôle n'existe pas
+    } catch (error) {
+      console.error("Token invalide", error);
+      localStorage.removeItem("token");
+      router.push("/login");
+    }
+  }, [router]);
+
+  if (!user) {
+    return <div>Chargement...</div>;
+  }
 
   return (
     <ClickOutside onClick={() => setSidebarOpen(false)}>
       <aside
-        className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden border-r border-stroke bg-white dark:border-stroke-dark dark:bg-gray-dark lg:static lg:translate-x-0 ${
+        className={`absolute left-0 top-0 z-50 flex h-screen w-72 flex-col overflow-y-hidden border-r border-stroke bg-white dark:border-stroke-dark dark:bg-gray-dark lg:static lg:translate-x-0 ${
           sidebarOpen
             ? "translate-x-0 duration-300 ease-linear"
             : "-translate-x-full"
         }`}
       >
-        {/* <!-- SIDEBAR HEADER --> */}
-        <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 xl:py-10">
+        {/* En-tête de la barre latérale */}
+        <div className="flex items-center justify-between px-6 py-5 lg:py-6">
           <Link href="/">
             <div className="flex items-center">
               <Image
                 width={50}
-                height={14}
+                height={50}
                 src="/images/logo/logo.png"
                 alt="Logo"
                 priority
-                style={{ width: "auto", height: "auto" }}
+                className="h-auto w-auto"
               />
-              <h1 className="mb-0.5 ml-3 bg-gradient-to-r from-purple-500  to-cyan-400 bg-clip-text text-heading-5 font-bold text-transparent dark:text-white">
-                Bureau d'Ordre
+              <h1 className="ml-3 text-3xl font-bold text-gray-900 dark:text-white">
+                <span className="text-[#8099EC]">Ordo</span>Desk
               </h1>
             </div>
           </Link>
@@ -413,10 +467,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             </svg>
           </button>
         </div>
-        {/* <!-- SIDEBAR HEADER --> */}
 
+        {/* Contenu de la barre latérale */}
         <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
-          {/* <!-- Sidebar Menu --> */}
           <nav className="mt-1 px-4 lg:px-6">
             {menuGroups.map((group, groupIndex) => (
               <div key={groupIndex}>
@@ -425,19 +478,28 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </h3>
 
                 <ul className="mb-6 flex flex-col gap-2">
-                  {group.menuItems.map((menuItem, menuIndex) => (
-                    <SidebarItem
-                      key={menuIndex}
-                      item={menuItem}
-                      pageName={pageName}
-                      setPageName={setPageName}
-                    />
-                  ))}
+                  {group.menuItems.map((menuItem, menuIndex) => {
+                    // Vérifier si l'élément doit être affiché en fonction du rôle
+                    if (
+                      menuItem.condition &&
+                      !menuItem.condition(user.role || "user")
+                    ) {
+                      return null; // Ne pas afficher l'élément si la condition n'est pas remplie
+                    }
+
+                    return (
+                      <SidebarItem
+                        key={menuIndex}
+                        item={menuItem}
+                        pageName={pageName}
+                        setPageName={setPageName}
+                      />
+                    );
+                  })}
                 </ul>
               </div>
             ))}
           </nav>
-          {/* <!-- Sidebar Menu --> */}
         </div>
       </aside>
     </ClickOutside>
