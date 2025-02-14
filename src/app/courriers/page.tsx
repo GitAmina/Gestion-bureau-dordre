@@ -69,20 +69,18 @@ export default function Courriers() {
         await axios.post("/api/archive", { courrierId: courrier.id });
         toast.success("Courrier archivé avec succès !");
       }
-  
+
       // Mettre à jour l'état local pour refléter les changements
       setCourriers((prevCourriers) =>
         prevCourriers.map((c) =>
-          c.id === courrier.id ? { ...c, archived: !courrier.archived } : c
-        )
+          c.id === courrier.id ? { ...c, archived: !courrier.archived } : c,
+        ),
       );
     } catch (error) {
       console.error("Erreur lors de la modification de l'archivage :", error);
       toast.error("Impossible de modifier l'archivage du courrier.");
     }
   };
-  
-  
 
   // Fonction pour gérer le clic sur l'icône d'information
   const handleViewDetails = (courrier: Courrier) => {
@@ -185,7 +183,6 @@ export default function Courriers() {
     );
   };
 
-  
   // Pour telecharger un courrier
   const downloadCourrier = async (id: number) => {
     try {
@@ -378,12 +375,14 @@ export default function Courriers() {
                       </button>
 
                       <button
-  onClick={() => handleArchive(courrier)}
-  className={`p-2 rounded-full ${
-    courrier.archived ? "bg-green-500 text-white" : "bg--200"
-  }`}
-  title={courrier.archived ? "Désarchiver" : "Archiver"}
->
+                        onClick={() => handleArchive(courrier)}
+                        className={`rounded-full p-2 ${
+                          courrier.archived
+                            ? "bg-green-500 text-white"
+                            : "bg--200"
+                        }`}
+                        title={courrier.archived ? "Désarchiver" : "Archiver"}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="24"
@@ -436,6 +435,13 @@ export default function Courriers() {
       {/* Bouton de pagination */}
       <div className="mt-4 flex items-center justify-between">
         <button
+          className={`rounded px-4 py-2 ${currentPage === 1 ? "bg-gray-300" : "bg-indigo-500 text-white hover:bg-indigo-500"}`}
+          onClick={() => setCurrentPage(1)}
+          disabled={currentPage === 1}
+        >
+          Première page
+        </button>
+        <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
           className={`rounded px-4 py-2 ${currentPage === 1 ? "bg-gray-300" : "bg-indigo-500 text-white hover:bg-indigo-500"}`}
@@ -469,6 +475,17 @@ export default function Courriers() {
           className={`rounded px-4 py-2 ${currentPage === Math.ceil(sortedCourriers.length / itemsPerPage) ? "bg-gray-300" : "bg-indigo-500 text-white hover:bg-indigo-500"}`}
         >
           Suivant
+        </button>
+        <button
+          className={`rounded px-4 py-2 ${currentPage === Math.ceil(sortedCourriers.length / itemsPerPage) ? "bg-gray-300" : "bg-indigo-500 text-white hover:bg-indigo-500"}`}
+          onClick={() =>
+            setCurrentPage(Math.ceil(sortedCourriers.length / itemsPerPage))
+          }
+          disabled={
+            currentPage === Math.ceil(sortedCourriers.length / itemsPerPage)
+          }
+        >
+          Dernière page
         </button>
       </div>
 
